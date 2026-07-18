@@ -4,9 +4,10 @@ import { Compass, Send, Ticket, Wallet, ShoppingBag, ArrowRight, Sparkles, Check
 
 interface FanInterfaceProps {
   activeVenue: VenueConfig;
+  onForecastRun?: (densityIndex: number, bottlenecks: string[], recommendedReroute: string, insights: string) => void;
 }
 
-export default function FanInterface({ activeVenue }: FanInterfaceProps) {
+export default function FanInterface({ activeVenue, onForecastRun }: FanInterfaceProps) {
   // Predictive Pathing State
   const [isPathing, setIsPathing] = useState(false);
   const [pathingResult, setPathingResult] = useState<any>(null);
@@ -45,6 +46,9 @@ export default function FanInterface({ activeVenue }: FanInterfaceProps) {
       });
       const data = await response.json();
       setPathingResult(data);
+      if (data && typeof data.densityIndex === 'number' && onForecastRun) {
+        onForecastRun(data.densityIndex, data.bottlenecks || [], data.recommendedReroute || '', data.insights || '');
+      }
     } catch (err) {
       console.error(err);
     } finally {

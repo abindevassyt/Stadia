@@ -83,6 +83,35 @@ To facilitate immediate, thorough testing of every single role in Stadia OS, use
 |:---|:---|:---|:---|:---:|:---|
 | `fan` | John Doe | Attendee / Fan | Fan | `0` | Sign up with any Email & Passcode OR click Google SSO. |
 
+### 5. Detailed QA Test Credentials Matrix
+
+To facilitate rapid automated QA and manual testing, use the following comprehensive matrix containing the exact sign-in credentials mapped in `/src/data/userSeed.ts`:
+
+| Persona ID | Name | Role Title | Category | Clearance | Test Email Address | Test PIN / Passcode |
+|:---|:---|:---|:---|:---:|:---|:---|
+| **`ed`** | Sarah Jenkins | Executive Director (ED) | Executive | `5` | `sarah.jenkins@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`rco`** | David Vance | Risk & Compliance Officer (RCO) | Executive | `4` | `david.vance@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`ccos`** | Marcus Brody | Command Center Supervisor (CCOS) | Executive | `4` | `marcus.brody@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`clm`** | Jean-Pierre Laurent | Commercial Leasing Manager (CLM) | Executive | `4` | `jp.laurent@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`pba`** | Victoria Song | Private Bookings Agent (PBA) | Executive | `3` | `victoria.song@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`fom`** | Elena Rostova | Facilities Operations Manager (FOM) | CMMS | `4` | `elena.rostova@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`mep`** | Liam Neill | MEP Technician (MEP) | CMMS | `3` | `liam.neill@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`lva`** | Nikhil Sen | Low-Voltage & AV Engineer (LVA) | CMMS | `3` | `nikhil.sen@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`tac`** | Oren Tal | Tool Crib & Asset Custodian (TAC) | CMMS | `3` | `oren.tal@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`cpc`** | Sven Lindqvist | Concessions Pop-Up Coord. (CPC) | Staff | `3` | `sven.lindqvist@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`ilc`** | Tanya Brady | Inventory & Logistics Clerk (ILC) | Staff | `2` | `tanya.brady@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`pol`** | Gary Vance | Promoter Operations Liaison (POL) | Staff | `3` | `gary.vance@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`vwd`** | Clara Oswald | Volunteer Workforce Dir. (VWD) | Staff | `3` | `clara.oswald@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`svl`** | Arthur Pendragon | Sector Volunteer Lead (SVL) | Staff | `2` | `arthur.pendragon@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`cwv`** | Guinevere Du Lac | Concierge Wayfinding Vol. (CWV) | Staff | `1` | `guinevere.dulac@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`gatc`** | Lancelot Smith | Gate Ticket Controller (GATC) | Staff | `2` | `lancelot.smith@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`css`** | Gawain Green | Crowd Safety Steward (CSS) | Staff | `1` | `gawain.green@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`rrso`** | Diana Prince | Rapid Response Security (RRSO) | Staff | `3` | `diana.prince@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`ect`** | Peter Parker | Environmental Cleanliness (ECT) | Staff | `1` | `peter.parker@stadiaos.com` | PIN: **`2026`** (Pass: `Stadia2026!`) |
+| **`fan`** | John Doe | Attendee / Fan | Fan | `0` | `john.doe@stadiaos.com` | Passcode: **`Ticket102!`** |
+
+*Note: All Corporate & Field Staff use direct multi-tenant PIN verification (`2026` or `1234`) on Gate 5, keeping them isolated from public attendee schemas in accordance with the Zero-Trust routing model.*
+
 ---
 
 ## 🛠️ Testing Walkthrough & Operational Scenarios
@@ -110,6 +139,50 @@ Here is how you can verify each function of the Stadia OS using the seeded recor
 2. Open the **In-Seat Concierge Chat** at the bottom.
 3. Ask the chatbot: *"I want to pre-order a burger, and there is a water leak near Gate A"*.
 4. Verify the multi-agent AI automatically triggers parallel workflows, placing a concession pre-order and logging a CMMS ticket simultaneously.
+
+---
+
+## 🎨 Global Theme Toggle & Workspace Settings
+
+To accommodate both high-density indoor operations and outdoor high-glare environments, Stadia OS includes a comprehensive personalization dashboard:
+
+1. **Global Theme Toggle**:
+   * Located at the top right of the **Navbar** (indicated by a Sun/Moon icon).
+   * Instantly transitions the entire workspace between a low-light twilight dark canvas and a crisp, high-contrast solar light theme.
+   * Persists the user's color scheme in browser-safe client-side partition storage.
+
+2. **System Settings Dashboard**:
+   * Accessible via the gear icon in the **Navbar** or the **System Settings** tab.
+   * **Visual Color Theme**: Toggles Dark and Light color palettes.
+   * **Diagnostic Audio Alarms**: Mutes or activates audible siren cues when SCADA telemetry indices trip thresholds.
+   * **BMS Telemetry Refresh Interval**: Adjusts clock frequency for simulated stream polling rates (5 seconds, 15 seconds, or 30 seconds).
+   * **A11y Typography Scaling**: Increases text size multiplier for on-the-field visibility on rugged tablets.
+   * **Geofence Sector Strictness**: Sets proximity checking standards (Strict 50m, Wide 500m, or Sandbox Mode).
+   * **Baseline Currency Index**: Choose local currency representations (`$`, `€`, `£`) for executive ledger settlements.
+
+---
+
+## 🗺️ Offline-First Interactive Venue Map Viewer
+
+To ensure staff, stewards, and volunteers remain fully operational during cell network congestion or hardware power failure events, a high-fidelity **Offline Venue Map** is available inside the **Staff & Volunteer Hub**:
+
+1. **Topological Digital Twin Network**:
+   * Renders the active venue's coordinates on an SVG grid overlay, mapping gate entrance turnstiles, corridors, ramps, emergency stairways, elevators, and seating blocks.
+   * Visualizes status flags (e.g., congested corridors indicated by high-contrast red warnings).
+
+2. **Breadth-First Search (BFS) Wayfinding Router**:
+   * Select a source starting node and terminal destination via direct node clicks or quick selectors.
+   * Automatically computes the shortest path and highlights routing legs with glowing animated vectors.
+
+3. **Offline Local Storage Caching**:
+   * An intuitive **Network Connection Toggle** simulates disconnection.
+   * In offline mode, the viewer continues to read and render the spatial topological system from browser partition storage.
+   * Click **Refresh Map Cache** to pull down and override offline data schemas with live static configuration variables.
+
+4. **Offline Incident Outbox Queue**:
+   * Direct node selection prompts staff to "Report Anomaly Offline".
+   * Filing reports offline buffers them safely in a client-side database queue (outbox).
+   * Reconnecting online and selecting **Push Outbox (Sync)** transmits pending issues to the centralized CMMS work ticket stream instantly.
 
 ---
 

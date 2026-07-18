@@ -1,19 +1,33 @@
 import React, { useState } from 'react';
-import { VenueConfig, WorkOrder } from '../types';
-import { Mic, Search, MapPin, ClipboardList, CheckSquare, Clock, ShieldAlert, Globe, Activity, RefreshCw } from 'lucide-react';
+import { VenueConfig, WorkOrder, AlertServiceLog } from '../types';
+import { Mic, Search, MapPin, ClipboardList, CheckSquare, Clock, ShieldAlert, Globe, Activity, RefreshCw, Sparkles, ShieldCheck, AlertTriangle } from 'lucide-react';
+import OfflineVenueMap from './OfflineVenueMap';
+import DensityHistoryChart from './DensityHistoryChart';
 
 interface StaffInterfaceProps {
   activeVenue: VenueConfig;
   workOrders: WorkOrder[];
   onAddWorkOrder: (wo: WorkOrder) => void;
   currentUserRole: string;
+  bottleneckThreshold: number;
+  setBottleneckThreshold: (val: number) => void;
+  alertServiceActive: boolean;
+  setAlertServiceActive: (val: boolean) => void;
+  alertServiceLogs: AlertServiceLog[];
+  onForecastRun: (densityIndex: number, bottlenecks: string[], recommendedReroute: string, insights: string) => void;
 }
 
 export default function StaffInterface({
   activeVenue,
   workOrders,
   onAddWorkOrder,
-  currentUserRole
+  currentUserRole,
+  bottleneckThreshold,
+  setBottleneckThreshold,
+  alertServiceActive,
+  setAlertServiceActive,
+  alertServiceLogs,
+  onForecastRun
 }: StaffInterfaceProps) {
   // Voice Dictation States
   const [dictationText, setDictationText] = useState('Severe water leak and restroom overflow at Block A turnstiles concourse, causing safety slips risk.');
@@ -25,6 +39,34 @@ export default function StaffInterface({
   const [ragLang, setRagLang] = useState('English');
   const [isQueryingPlaybook, setIsQueryingPlaybook] = useState(false);
   const [playbookResult, setPlaybookResult] = useState<any>(null);
+
+  // Proactive Alert Service Simulation State
+  const [isSimulatingForecast, setIsSimulatingForecast] = useState(false);
+  const [simulatedDensity, setSimulatedDensity] = useState<number | null>(null);
+
+  const handleRunStaffSimulation = async () => {
+    setIsSimulatingForecast(true);
+    try {
+      const response = await fetch('/api/ai/predictive-pathing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          venueId: activeVenue.id,
+          activeNodes: activeVenue.digitalTwin.nodes,
+          averageFlowRate: 350 + Math.floor(Math.random() * 150)
+        })
+      });
+      const data = await response.json();
+      setSimulatedDensity(data.densityIndex);
+      if (data && typeof data.densityIndex === 'number') {
+        onForecastRun(data.densityIndex, data.bottlenecks || [], data.recommendedReroute || '', data.insights || '');
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSimulatingForecast(false);
+    }
+  };
 
   // Check-In State
   const [isCheckedIn, setIsCheckedIn] = useState(false);
@@ -306,6 +348,227 @@ export default function StaffInterface({
           <span>RAG Standard: Vector-Match Hybrid Embeddings</span>
           <span>Target SLA: &lt;400ms Response</span>
         </div>
+      </div>
+
+      {/* Proactive 'Alert Trigger' Crowd Safety Service Dashboard */}
+      <div className="lg:col-span-12 bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl space-y-6" id="steward-alert-trigger-service">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg shrink-0">
+                <ShieldAlert className="h-5 w-5 animate-pulse" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+                  Proactive 'Alert Trigger' Service
+                  <span className={`text-[10px] uppercase px-2 py-0.5 rounded font-mono border ${
+                    alertServiceActive 
+                      ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-400' 
+                      : 'bg-slate-950 border-slate-800 text-slate-500'
+                  }`}>
+                    {alertServiceActive ? '● Engine Online' : '○ Engine Paused'}
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  Automated high-priority alert dispatching integrated with overhead Edge Computer Vision sensors and the 15-Minute Predictive Pathing Engine.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-mono text-slate-400 uppercase">Alert Engine:</span>
+            <button
+              onClick={() => setAlertServiceActive(!alertServiceActive)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono uppercase transition-all cursor-pointer border ${
+                alertServiceActive
+                  ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400'
+                  : 'bg-slate-950 border-slate-800 text-slate-500 hover:text-slate-300'
+              }`}
+              id="btn-toggle-alert-engine"
+            >
+              {alertServiceActive ? 'Active (Tap to Pause)' : 'Paused (Tap to Resume)'}
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+          {/* Section 1: Threshold & Simulation Controls */}
+          <div className="md:col-span-6 bg-slate-950 border border-slate-850 p-5 rounded-xl space-y-5">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[10px] font-mono text-slate-400 uppercase block font-bold">
+                  Bottleneck Threshold
+                </span>
+                <span className="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded">
+                  {bottleneckThreshold}% Density
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed mb-3">
+                When 15-minute future crowd flow simulations exceed this value, high-priority work ticket alarms are automatically generated for CSS.
+              </p>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min="40"
+                  max="95"
+                  step="5"
+                  value={bottleneckThreshold}
+                  onChange={(e) => setBottleneckThreshold(parseInt(e.target.value))}
+                  className="flex-1 accent-emerald-500 bg-slate-900 h-1.5 rounded-lg cursor-pointer"
+                  id="bottleneck-threshold-slider"
+                />
+                <span className="text-[10px] font-mono text-slate-400">40% - 95%</span>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-900 pt-4 space-y-3">
+              <span className="text-[10px] font-mono text-slate-400 uppercase block font-bold">
+                Run Manual Proactive Scan
+              </span>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                Manually query the Predictive Pathing AI Engine. This checks current digital twin node occupancies and executes models to forecast future bottlenecks.
+              </p>
+              <button
+                onClick={handleRunStaffSimulation}
+                disabled={isSimulatingForecast}
+                className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-800 text-white font-bold text-xs py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all shadow-md cursor-pointer"
+                id="btn-run-proactive-forecast-scan"
+              >
+                {isSimulatingForecast ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Calculating Predictive Vectors...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    Query 15m Predictive Forecast
+                  </>
+                )}
+              </button>
+              {simulatedDensity !== null && (
+                <div className="bg-slate-900/50 border border-slate-850 p-2.5 rounded text-[11px] font-mono text-slate-300 flex justify-between">
+                  <span>Last scanned forecast:</span>
+                  <span className={`font-bold ${simulatedDensity >= bottleneckThreshold ? 'text-red-400' : 'text-emerald-400'}`}>
+                    {simulatedDensity}% Density {simulatedDensity >= bottleneckThreshold ? '(THRESHOLD VIOLATION)' : '(Nominal)'}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section 2: Configured Automatic Action Protocols */}
+          <div className="md:col-span-6 bg-slate-950 border border-slate-850 p-5 rounded-xl flex flex-col justify-between">
+            <div className="space-y-3">
+              <span className="text-[10px] font-mono text-slate-400 uppercase block font-bold">
+                CSS Automated Action Protocol
+              </span>
+              <div className="space-y-2.5 text-[11px] font-mono">
+                <div className="flex items-start gap-2 border-l-2 border-emerald-500 pl-3 py-1 bg-emerald-500/5">
+                  <div>
+                    <span className="text-emerald-400 font-bold block">IF Density &lt; {bottleneckThreshold}% (Nominal):</span>
+                    <span className="text-slate-400 block text-[10px] mt-0.5">
+                      Status checks green. Log telemetry packet. Maintain current security patrol rotations.
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2 border-l-2 border-red-500 pl-3 py-1 bg-red-500/5">
+                  <div>
+                    <span className="text-red-400 font-bold block">IF Density ≥ {bottleneckThreshold}% (Breached):</span>
+                    <ul className="text-slate-400 list-disc list-inside space-y-1 mt-1 text-[10px] leading-relaxed">
+                      <li>Generate dynamic critical Alarm Work Order assigned to CSS squad.</li>
+                      <li>Deploy mass geofenced browser notifications to CSS terminal consoles.</li>
+                      <li>Transmit localized rerouting advice to Fan portal blue-dot engine.</li>
+                      <li>Trigger audible alarm sound on authorized active steward terminals.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-900 pt-3 mt-3 flex items-center gap-2 text-[10px] text-slate-500 font-mono">
+              <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
+              <span>Complies with GDPR Recital 26 and zero-trust security architecture.</span>
+            </div>
+          </div>
+
+          {/* Density History Chart Visualizer */}
+          <div className="lg:col-span-12">
+            <DensityHistoryChart logs={alertServiceLogs} threshold={bottleneckThreshold} />
+          </div>
+
+          {/* Section 3: Automated Dispatch Logs */}
+          <div className="lg:col-span-12 bg-slate-950 border border-slate-850 p-5 rounded-xl space-y-4">
+            <div className="flex justify-between items-center border-b border-slate-900 pb-2">
+              <span className="text-[10px] font-mono text-slate-400 uppercase block font-bold">
+                Automated Service Alert Logs (Session History)
+              </span>
+              <span className="text-[9px] font-mono text-slate-500 uppercase">
+                Showing last {alertServiceLogs.length} updates
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full font-mono text-[11px] text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-900 text-slate-500 text-[10px]">
+                    <th className="pb-2 font-medium">TIMESTAMP</th>
+                    <th className="pb-2 font-medium">LOG ID</th>
+                    <th className="pb-2 font-medium">FORECASTED DENSITY</th>
+                    <th className="pb-2 font-medium">BOTTLENECK THRESHOLD</th>
+                    <th className="pb-2 font-medium">STATUS</th>
+                    <th className="pb-2 font-medium">DETECTED BOTTLENECKS</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-900">
+                  {alertServiceLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-4 text-center text-slate-500 italic">
+                        No automated forecasts logged in this session yet.
+                      </td>
+                    </tr>
+                  ) : (
+                    alertServiceLogs.map((log) => (
+                      <tr key={log.id} className="hover:bg-slate-900/50 transition-colors">
+                        <td className="py-2.5 text-slate-400">{new Date(log.timestamp).toLocaleTimeString()}</td>
+                        <td className="py-2.5 text-white font-semibold">{log.id}</td>
+                        <td className="py-2.5">
+                          <span className={`font-bold ${log.status === 'breached' ? 'text-red-400' : 'text-emerald-400'}`}>
+                            {log.densityIndex}%
+                          </span>
+                        </td>
+                        <td className="py-2.5 text-slate-400">{log.threshold}%</td>
+                        <td className="py-2.5">
+                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border ${
+                            log.status === 'breached'
+                              ? 'bg-red-950/50 border-red-500/30 text-red-400 animate-pulse'
+                              : 'bg-emerald-950/40 border-emerald-500/20 text-emerald-400'
+                          }`}>
+                            {log.status}
+                          </span>
+                        </td>
+                        <td className="py-2.5 text-slate-300">
+                          {log.bottlenecks.join(', ') || 'None (Corridors Nominal)'}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Offline-First Interactive Venue Map Viewer */}
+      <div className="lg:col-span-12">
+        <OfflineVenueMap
+          activeVenue={activeVenue}
+          onAddWorkOrder={onAddWorkOrder}
+          currentUserRole={currentUserRole}
+        />
       </div>
 
       {/* Roster shift check-in */}

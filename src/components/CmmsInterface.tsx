@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { VenueConfig, CMMSSensor, RevenueLog, AssetLoan } from '../types';
 import { Thermometer, Landmark, Barcode, ShieldCheck, Play, AlertTriangle, CheckCircle2, RefreshCw } from 'lucide-react';
+import QrAssetScanner from './QrAssetScanner';
+import QrAssetGenerator from './QrAssetGenerator';
 
 interface CmmsInterfaceProps {
   activeVenue: VenueConfig;
@@ -338,6 +340,14 @@ export default function CmmsInterface({ activeVenue, onUpdateSensors }: CmmsInte
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Part 4: Camera-Enabled QR Code Asset Label Scanner, Document Viewer & Label Provisioner */}
+      <div className="xl:col-span-7">
+        <QrAssetScanner activeVenue={activeVenue} />
+      </div>
+      <div className="xl:col-span-5">
+        <QrAssetGenerator activeVenue={activeVenue} onUpdateSensors={onUpdateSensors} />
       </div>
     </div>
   );

@@ -72,6 +72,7 @@ export interface ChatMessage {
   sender: 'user' | 'assistant';
   text: string;
   timestamp: string;
+  latencyMs?: number;
   actionsPerformed?: {
     type: string;
     description: string;
@@ -123,3 +124,24 @@ export interface EventOrchestrationScenario {
   impactAnalysis: string;
   proposedNotifications: string[];
 }
+
+export interface UserPreferences {
+  theme: 'dark' | 'light';
+  alertSounds: boolean;
+  refreshRate: number; // in seconds, e.g. 5, 15, 30
+  fontSize: 'normal' | 'large';
+  geofenceRange: 'strict' | 'wide' | 'off';
+  currency: 'USD' | 'EUR' | 'GBP';
+}
+
+export interface AlertServiceLog {
+  id: string;
+  timestamp: string;
+  densityIndex: number;
+  threshold: number;
+  status: 'breached' | 'nominal';
+  bottlenecks: string[];
+  recommendedReroute: string;
+}
+
+

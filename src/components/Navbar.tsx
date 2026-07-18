@@ -1,16 +1,39 @@
 import React, { useState } from 'react';
 import { Persona, PersonaCategory } from '../types';
 import { ALL_PERSONAS } from '../data/venues';
-import { Shield, ShieldAlert, Cpu, User, LogOut, ChevronDown, CheckSquare, Lock } from 'lucide-react';
+import { 
+  Shield, 
+  ShieldAlert, 
+  Cpu, 
+  User, 
+  LogOut, 
+  ChevronDown, 
+  CheckSquare, 
+  Lock,
+  Sun,
+  Moon,
+  Settings
+} from 'lucide-react';
 
 interface NavbarProps {
   activePersona: Persona;
   onChangePersona: (persona: Persona) => void;
   activeVenueName: string;
   onLogout: () => void;
+  currentTheme: 'dark' | 'light';
+  onToggleTheme: () => void;
+  onGoToSettings: () => void;
 }
 
-export default function Navbar({ activePersona, onChangePersona, activeVenueName, onLogout }: NavbarProps) {
+export default function Navbar({ 
+  activePersona, 
+  onChangePersona, 
+  activeVenueName, 
+  onLogout,
+  currentTheme,
+  onToggleTheme,
+  onGoToSettings
+}: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Group personas by logical category
@@ -148,6 +171,30 @@ export default function Navbar({ activePersona, onChangePersona, activeVenueName
               </div>
             )}
           </div>
+
+          {/* Global Theme Toggle Button */}
+          <button
+            onClick={onToggleTheme}
+            className="bg-slate-900 border border-slate-850 hover:border-emerald-500/50 text-slate-400 hover:text-emerald-400 p-2.5 rounded-xl transition-all shadow-md flex items-center justify-center cursor-pointer"
+            title={currentTheme === 'dark' ? 'Switch to Solar (Light) Theme' : 'Switch to Twilight (Dark) Theme'}
+            id="global-theme-toggle-btn"
+          >
+            {currentTheme === 'dark' ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </button>
+
+          {/* Quick Settings Page/Tab Shortcut Button */}
+          <button
+            onClick={onGoToSettings}
+            className="bg-slate-900 border border-slate-850 hover:border-emerald-500/50 text-slate-400 hover:text-emerald-400 p-2.5 rounded-xl transition-all shadow-md flex items-center justify-center cursor-pointer"
+            title="Open Workspace Settings"
+            id="global-settings-nav-btn"
+          >
+            <Settings className="h-4 w-4" />
+          </button>
 
           {/* Quick Direct Logout Button */}
           <button

@@ -6,17 +6,51 @@ import FanInterface from './components/FanInterface';
 import StaffInterface from './components/StaffInterface';
 import CmmsInterface from './components/CmmsInterface';
 import ExecutiveInterface from './components/ExecutiveInterface';
+import SettingsInterface from './components/SettingsInterface';
 import AuthSystem from './components/AuthSystem';
+import AIAssistant from './components/AIAssistant';
 import { PRESET_VENUES, ALL_PERSONAS } from './data/venues';
-import { VenueConfig, Persona, WorkOrder, DigitalTwinNode, CMMSSensor } from './types';
-import { ShieldCheck, Lock, Layers, UserCheck, Settings, AlertOctagon, HelpCircle } from 'lucide-react';
+import { VenueConfig, Persona, WorkOrder, DigitalTwinNode, CMMSSensor, UserPreferences, AlertServiceLog } from './types';
+import { ShieldCheck, Lock, Layers, UserCheck, Settings, AlertOctagon, HelpCircle, AlertTriangle } from 'lucide-react';
 import { useRoleNavigation } from './hooks/useRoleNavigation';
+import { usePreferences } from './context/PreferencesContext';
 
 export default function App() {
   const [venues, setVenues] = useState<VenueConfig[]>(PRESET_VENUES);
   const [activeVenue, setActiveVenue] = useState<VenueConfig>(PRESET_VENUES[0]);
   const [activePersona, setActivePersona] = useState<Persona>(ALL_PERSONAS[ALL_PERSONAS.length - 1]); // Default to Fan John Doe
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  // Proactive 'Alert Trigger' Service State
+  const [bottleneckThreshold, setBottleneckThreshold] = useState<number>(75);
+  const [alertServiceActive, setAlertServiceActive] = useState<boolean>(true);
+  const [alertServiceLogs, setAlertServiceLogs] = useState<AlertServiceLog[]>([
+    {
+      id: 'LOG-7701',
+      timestamp: new Date(Date.now() - 7200000).toISOString(),
+      densityIndex: 82,
+      threshold: 75,
+      status: 'breached',
+      bottlenecks: ['South Corridor A1'],
+      recommendedReroute: 'Route fans through turnstiles B (VIP) and Ramp South-East.'
+    },
+    {
+      id: 'LOG-7702',
+      timestamp: new Date(Date.now() - 3600000).toISOString(),
+      densityIndex: 58,
+      threshold: 75,
+      status: 'nominal',
+      bottlenecks: [],
+      recommendedReroute: 'All egress corridors operating within normal limits.'
+    }
+  ]);
+  const [globalActiveToast, setGlobalActiveToast] = useState<{
+    id: string;
+    densityIndex: number;
+    bottlenecks: string[];
+    recommendedReroute: string;
+    insights: string;
+  } | null>(null);
   
   // Shared global work orders state
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>([
@@ -106,7 +140,9 @@ export default function App() {
     }
   ]);
 
-  const [activeTab, setActiveTab] = useState<'vcp' | 'fan' | 'staff' | 'cmms' | 'executive'>('fan');
+  const [activeTab, setActiveTab] = useState<'vcp' | 'fan' | 'staff' | 'cmms' | 'executive' | 'settings'>('fan');
+
+  const { preferences, updatePreferences, toggleTheme } = usePreferences();
 
   const handleVenueChange = (venue: VenueConfig) => {
     // Sync active venue state
@@ -136,9 +172,81 @@ export default function App() {
     setWorkOrders(prev => [wo, ...prev]);
   };
 
+  const handleForecastRun = (densityIndex: number, bottlenecks: string[], recommendedReroute: string, insights: string) => {
+    const isBreach = densityIndex >= bottleneckThreshold;
+    const logId = 'LOG-' + Math.floor(1000 + Math.random() * 9000);
+    
+    const newLog: AlertServiceLog = {
+      id: logId,
+      timestamp: new Date().toISOString(),
+      densityIndex,
+      threshold: bottleneckThreshold,
+      status: isBreach ? 'breached' : 'nominal',
+      bottlenecks,
+      recommendedReroute
+    };
+    setAlertServiceLogs(prev => [newLog, ...prev]);
+
+    if (isBreach && alertServiceActive) {
+      const alertId = 'ALT-' + Math.floor(1000 + Math.random() * 9000);
+      const newAlertOrder: WorkOrder = {
+        id: alertId,
+        title: `⚠️ [FORECAST BREACH] ${densityIndex}% Crowd Density Alert`,
+        description: `Predictive Pathing Engine forecasted 15-minute density (${densityIndex}%) exceeding the Bottleneck Threshold (${bottleneckThreshold}%). Bottleneck zones: ${bottlenecks.join(', ') || 'Main Egress Corridor'}. Action plan: ${recommendedReroute}`,
+        location: bottlenecks[0] || 'Main Concourse',
+        assetId: 'predictive-pathing-sensor',
+        priority: densityIndex >= 85 ? 'critical' : 'high',
+        assignedToRole: 'Crowd Safety Steward (CSS)',
+        status: 'open',
+        createdAt: new Date().toISOString(),
+        reportedBy: 'AI Predictive Pathing Alert Service'
+      };
+      
+      setWorkOrders(prev => [newAlertOrder, ...prev]);
+      
+      setGlobalActiveToast({
+        id: alertId,
+        densityIndex,
+        bottlenecks,
+        recommendedReroute,
+        insights
+      });
+
+      if (preferences.alertSounds) {
+        try {
+          const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const osc1 = audioCtx.createOscillator();
+          const osc2 = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          
+          osc1.type = 'sawtooth';
+          osc1.frequency.setValueAtTime(880, audioCtx.currentTime);
+          osc1.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
+          
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(440, audioCtx.currentTime);
+          
+          gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+          
+          osc1.connect(gainNode);
+          osc2.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          
+          osc1.start();
+          osc2.start();
+          osc1.stop(audioCtx.currentTime + 0.4);
+          osc2.stop(audioCtx.currentTime + 0.4);
+        } catch (e) {
+          console.log('AudioContext blocked/failed', e);
+        }
+      }
+    }
+  };
+
   // Zero-Trust Access Rules validation
-  const checkAccess = (tab: 'vcp' | 'fan' | 'staff' | 'cmms' | 'executive'): { allowed: boolean; reason?: string } => {
-    if (tab === 'vcp' || tab === 'fan') return { allowed: true };
+  const checkAccess = (tab: 'vcp' | 'fan' | 'staff' | 'cmms' | 'executive' | 'settings'): { allowed: boolean; reason?: string } => {
+    if (tab === 'vcp' || tab === 'fan' || tab === 'settings') return { allowed: true };
     
     if (tab === 'staff') {
       // Must have staff level clearance or higher
@@ -173,6 +281,7 @@ export default function App() {
 
   // Morph navigation menu based on role category and clearance
   const getTabBadge = (tab: string) => {
+    if (tab === 'settings') return null;
     const access = checkAccess(tab as any);
     if (!access.allowed) {
       return <Lock className="h-3 w-3 text-red-500 inline-block shrink-0 ml-1" />;
@@ -214,7 +323,65 @@ export default function App() {
           setActivePersona(ALL_PERSONAS[ALL_PERSONAS.length - 1]);
           setActiveTab('fan');
         }}
+        currentTheme={preferences.theme}
+        onToggleTheme={toggleTheme}
+        onGoToSettings={() => setActiveTab('settings')}
       />
+
+      {/* Global Alert Notification Banner (Proactive Alert Trigger Service) */}
+      {globalActiveToast && (
+        <div className="mx-6 mt-4 bg-red-950/90 border-2 border-red-500/80 rounded-2xl p-5 shadow-2xl backdrop-blur-md animate-in slide-in-from-top duration-300" id="global-scada-forecast-alert">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="p-2 bg-red-500/20 text-red-400 rounded-xl animate-pulse shrink-0">
+                <AlertTriangle className="h-6 w-6" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] bg-red-500 text-white font-bold px-2 py-0.5 rounded uppercase font-mono tracking-wider animate-bounce">
+                    High Priority
+                  </span>
+                  <h4 className="text-sm font-bold text-red-200 uppercase tracking-wide">
+                    Automated Predictive Pathing Breach
+                  </h4>
+                </div>
+                <p className="text-xs text-red-300 font-semibold mt-1">
+                  A 15-minute future simulation forecasted crowd density of <span className="text-white underline font-bold">{globalActiveToast.densityIndex}%</span> exceeding your configured threshold of {bottleneckThreshold}%.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3 text-xs bg-slate-950/70 border border-red-900/40 p-3 rounded-lg font-mono">
+                  <div>
+                    <span className="text-red-400/80 block uppercase text-[10px]">Forecasted Bottlenecks:</span>
+                    <span className="text-white font-semibold">{globalActiveToast.bottlenecks.join(', ') || 'No single bottleneck zone'}</span>
+                  </div>
+                  <div>
+                    <span className="text-red-400/80 block uppercase text-[10px]">Steward Action Protocol:</span>
+                    <span className="text-emerald-400 font-medium">{globalActiveToast.recommendedReroute}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+              <button
+                onClick={() => {
+                  const targetWoId = globalActiveToast.id;
+                  setWorkOrders(prev => prev.map(wo => wo.id === targetWoId ? { ...wo, status: 'in-progress' } : wo));
+                  setGlobalActiveToast(null);
+                }}
+                className="bg-red-500 hover:bg-red-600 text-white font-bold text-xs px-4 py-2 rounded-xl transition-all shadow-lg shadow-red-500/15"
+                id="ack-active-forecast-alert-btn"
+              >
+                Acknowledge & Deploy
+              </button>
+              <button
+                onClick={() => setGlobalActiveToast(null)}
+                className="bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 text-xs font-semibold px-3 py-2 rounded-xl transition-all"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main OS Desktop Canvas */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8">
@@ -226,7 +393,8 @@ export default function App() {
             { id: 'fan', label: 'Fan & Guest Portal' },
             { id: 'staff', label: 'Staff & Volunteer hub' },
             { id: 'cmms', label: 'CMMS Facilities SCADA' },
-            { id: 'executive', label: 'Executive Operations P&L' }
+            { id: 'executive', label: 'Executive Operations P&L' },
+            { id: 'settings', label: 'System Settings' }
           ].map(tab => (
             <button
               key={tab.id}
@@ -318,7 +486,7 @@ export default function App() {
                     />
                   )}
                   {activeTab === 'fan' && (
-                    <FanInterface activeVenue={activeVenue} />
+                    <FanInterface activeVenue={activeVenue} onForecastRun={handleForecastRun} />
                   )}
                   {activeTab === 'staff' && (
                     <StaffInterface
@@ -326,6 +494,12 @@ export default function App() {
                       workOrders={workOrders}
                       onAddWorkOrder={handleAddWorkOrder}
                       currentUserRole={activePersona.roleName}
+                      bottleneckThreshold={bottleneckThreshold}
+                      setBottleneckThreshold={setBottleneckThreshold}
+                      alertServiceActive={alertServiceActive}
+                      setAlertServiceActive={setAlertServiceActive}
+                      alertServiceLogs={alertServiceLogs}
+                      onForecastRun={handleForecastRun}
                     />
                   )}
                   {activeTab === 'cmms' && (
@@ -335,7 +509,14 @@ export default function App() {
                     />
                   )}
                   {activeTab === 'executive' && (
-                    <ExecutiveInterface activeVenue={activeVenue} />
+                    <ExecutiveInterface
+                      activeVenue={activeVenue}
+                      alertServiceLogs={alertServiceLogs}
+                      bottleneckThreshold={bottleneckThreshold}
+                    />
+                  )}
+                  {activeTab === 'settings' && (
+                    <SettingsInterface />
                   )}
                 </motion.div>
               );
@@ -357,6 +538,9 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Adaptive Global AI Assistant Co-Pilot Panel */}
+      <AIAssistant activePersonaId={activePersona.id} />
     </div>
   );
 }

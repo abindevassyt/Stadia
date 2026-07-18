@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { VenueConfig, EventOrchestrationScenario } from '../types';
+import { VenueConfig, EventOrchestrationScenario, AlertServiceLog } from '../types';
 import { ShieldCheck, CalendarRange, Landmark, Send, Sparkles, RefreshCw, AlertTriangle, TrendingUp, DollarSign, Play } from 'lucide-react';
+import DensityHistoryChart from './DensityHistoryChart';
 
 interface ExecutiveInterfaceProps {
   activeVenue: VenueConfig;
+  alertServiceLogs: AlertServiceLog[];
+  bottleneckThreshold: number;
 }
 
-export default function ExecutiveInterface({ activeVenue }: ExecutiveInterfaceProps) {
+export default function ExecutiveInterface({ activeVenue, alertServiceLogs, bottleneckThreshold }: ExecutiveInterfaceProps) {
   // LWM Event Orchestration States
   const [contingencyTrigger, setContingencyTrigger] = useState('Thunderstorm delay, municipal train tracks flooded, 15000 fans trapped in outer entrance plazas.');
   const [isSimulatingLwm, setIsSimulatingLwm] = useState(false);
@@ -299,6 +302,11 @@ export default function ExecutiveInterface({ activeVenue }: ExecutiveInterfacePr
           <span>Calendar Window Lock: Peak season rate model</span>
           <span>Security Token: SHA-256 yield check</span>
         </div>
+      </div>
+
+      {/* Real-time Density History Analysis Visualizer */}
+      <div className="xl:col-span-12">
+        <DensityHistoryChart logs={alertServiceLogs} threshold={bottleneckThreshold} />
       </div>
 
       {/* Part 3: Post-Event P&L Settlement Analytics */}

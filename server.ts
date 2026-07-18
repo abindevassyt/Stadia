@@ -698,6 +698,112 @@ Response JSON schema:
   }
 });
 
+// ==========================================
+// API ROUTE 9: Multi-Turn Adaptive AI Co-Pilot
+// ==========================================
+app.post('/api/ai/chat', async (req, res) => {
+  const { messages, model, systemInstruction } = req.body;
+  const startTime = Date.now();
+  const ai = getAI();
+
+  // Standardize the model target
+  let selectedModel = model || 'gemini-3.5-flash';
+  if (selectedModel === 'lite') {
+    selectedModel = 'gemini-3.1-flash-lite';
+  } else if (selectedModel === 'flash') {
+    selectedModel = 'gemini-3.5-flash';
+  } else if (selectedModel === 'pro') {
+    selectedModel = 'gemini-3.1-pro-preview';
+  }
+
+  if (!ai) {
+    // Elegant localized simulation engine with realistic response times
+    // gemini-3.1-flash-lite simulates extremely fast low-latency execution (<180ms)
+    const simulatedLatency = selectedModel === 'gemini-3.1-flash-lite' 
+      ? Math.floor(Math.random() * 50 + 110) // 110-160ms ultra-fast latency
+      : Math.floor(Math.random() * 150 + 350); // 350-500ms standard latency
+      
+    await new Promise(resolve => setTimeout(resolve, simulatedLatency));
+
+    const lastMessage = messages?.[messages.length - 1]?.text || 'Hello';
+    const lastMsgLower = lastMessage.toLowerCase();
+    
+    let reply = '';
+    const sysLower = (systemInstruction || '').toLowerCase();
+    
+    if (sysLower.includes('concierge') || sysLower.includes('fan')) {
+      reply = `[Simulation - ${selectedModel}] As your Stadia Guest Guide, here is your update. `;
+      if (lastMsgLower.includes('upgrade') || lastMsgLower.includes('vip') || lastMsgLower.includes('seat')) {
+        reply += `There are premium VIP seats available at Sector 102 Club Level. Your current digital ticket is fully upgrade-eligible. Please consult the 'Fan & Guest Portal' ticket options to request a seat-swap.`;
+      } else if (lastMsgLower.includes('food') || lastMsgLower.includes('burger') || lastMsgLower.includes('eat') || lastMsgLower.includes('beer')) {
+        reply += `The concessions closest to Block 102 are fully stocked. You can pre-order an In-Seat burger or snack from the 'Concessions' tab, which routes directly to the kitchen.`;
+      } else if (lastMsgLower.includes('restroom') || lastMsgLower.includes('bathroom') || lastMsgLower.includes('toilet')) {
+        reply += `Restrooms are located right behind Block 102 (Turnstile Concourse West). Egress path is clear with less than a 3-minute queue time estimated.`;
+      } else {
+        reply += `I can assist you with interactive wayfinding, digital ticket transfers, in-seat food ordering, or reporting crowd bottlenecks. What would you like to know?`;
+      }
+    } else if (sysLower.includes('cmms') || sysLower.includes('scada') || sysLower.includes('maintenance')) {
+      reply = `[Simulation - ${selectedModel}] CMMS SCADA Co-Pilot connected. Live building telemetry is normal. `;
+      if (lastMsgLower.includes('leak') || lastMsgLower.includes('water') || lastMsgLower.includes('overflow') || lastMsgLower.includes('restroom')) {
+        reply += `Alert: Wetness sensor S-PLUMB-REST registered an active liquid leak in Restroom A1. An active Work Order (WO-5041) is currently assigned to an Environmental Cleanliness Tech (ECT) for resolution.`;
+      } else if (lastMsgLower.includes('chiller') || lastMsgLower.includes('hvac') || lastMsgLower.includes('sensor')) {
+        reply += `Telemetry Alert: Chiller HVAC-2 is operating in overload conditions at 28.4°C. Standard operating procedure suggests deploying an MEP Technician to perform manual thermal resets on the Sub-Grid phase breaker.`;
+      } else if (lastMsgLower.includes('work order') || lastMsgLower.includes('ticket')) {
+        reply += `You can dictate work orders using Natural Language Processing. Simply record your voice on the 'Staff Interface' to compile and geofence a facilities ticket automatically.`;
+      } else {
+        reply += `I am authorized to check low-voltage sensor grids, query open work orders, analyze thermal equipment failures, and verify tool crib asset RFID checkouts.`;
+      }
+    } else {
+      reply = `[Simulation - ${selectedModel}] Executive Advisory Analyst online. `;
+      if (lastMsgLower.includes('thunderstorm') || lastMsgLower.includes('contingency') || lastMsgLower.includes('delay') || lastMsgLower.includes('weather')) {
+        reply += `Level 5 Contingency Recommendation: A localized storm cell will impact stadium ingress routes. Transport volume capacity is forecast to drop by 45%. We advise activating the Large World Model contingency, delaying kickoff by 45 minutes, and requesting transit line frequency upgrades.`;
+      } else if (lastMsgLower.includes('revenue') || lastMsgLower.includes('p&l') || lastMsgLower.includes('sales') || lastMsgLower.includes('reconcil')) {
+        reply += `POS Revenue Audit: Total concourse vendor revenue-share is pacing 14% higher than last Friday. However, localized sales anomalies are flagged at Concourse West registers due to network packet loss. Offline transactions buffer mode is advised.`;
+      } else if (lastMsgLower.includes('capacity') || lastMsgLower.includes('crowd') || lastMsgLower.includes('volume')) {
+        reply += `Attendance Forecast: Live crowd density indexes show 92% occupancy across Sector Stands. Egress vector channels are clear with zero active blockade alerts.`;
+      } else {
+        reply += `Corporate Operations Ready. I can help synthesize real-time stadium revenues, formulate incident response, compile P&L forecasts, or review risk matrices for legal liability mitigation.`;
+      }
+    }
+
+    const elapsed = Date.now() - startTime;
+    return res.json({
+      success: true,
+      mode: 'simulation-fallback',
+      reply,
+      latencyMs: elapsed,
+      model: selectedModel
+    });
+  }
+
+  try {
+    // Map custom messages history directly to Gemini structure
+    const contents = messages.map((m: any) => ({
+      role: m.sender === 'user' ? 'user' : 'model',
+      parts: [{ text: m.text }]
+    }));
+
+    const response = await ai.models.generateContent({
+      model: selectedModel,
+      contents,
+      config: {
+        systemInstruction: systemInstruction || "You are a helpful and professional stadium operations assistant.",
+        temperature: 0.7,
+      }
+    });
+
+    const elapsed = Date.now() - startTime;
+    res.json({
+      success: true,
+      reply: response.text || 'Operational Co-Pilot is standing by.',
+      latencyMs: elapsed,
+      model: selectedModel
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 // ==========================================
 // Vite Middleware & SPA serving
