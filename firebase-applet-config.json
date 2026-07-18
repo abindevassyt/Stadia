@@ -1,0 +1,9 @@
+{
+  "apiKey": "AIzaSyFakeKey_ForCompilationPass_2026",
+  "authDomain": "stadia-os-sandbox.firebaseapp.com",
+  "projectId": "stadia-os-sandbox",
+  "storageBucket": "stadia-os-sandbox.appspot.com",
+  "messagingSenderId": "123456789012",
+  "appId": "1:123456789012:web:abcdef1234567890",
+  "firestoreDatabaseId": "(default)"
+}

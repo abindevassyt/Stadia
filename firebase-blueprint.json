@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User digital ticket details and authentication metadata.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "roleName": {
+          "type": "string",
+          "maxLength": 100
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Fan"]
+        },
+        "clearanceLevel": {
+          "type": "integer"
+        },
+        "allowedSectors": {
+          "type": "array"
+        },
+        "permissions": {
+          "type": "array"
+        },
+        "sector": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "row": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "seat": {
+          "type": "string",
+          "maxLength": 10
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["id", "name", "email", "roleName", "category", "clearanceLevel", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Individual registered fan profile and ticket details."
+    }
+  }
+}
