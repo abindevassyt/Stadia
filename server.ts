@@ -698,6 +698,404 @@ Response JSON schema:
 });
 
 // ==========================================
+// API ROUTE 8A: AI Accessibility & Quiet Pathfinder
+// ==========================================
+app.post('/api/ai/accessible-routing', async (req, res) => {
+  const { currentLocation, destination, accessibilityType, activeNodes } = req.body;
+  const ai = getAI();
+
+  if (!ai) {
+    // Elegant fallback simulation
+    let pathNodes = [currentLocation || 'Main Plaza Entrance', 'Corridor B', destination || 'Block 102 Row 15'];
+    let instructions = "Proceed through central Gate B, following the marked overhead signs.";
+    let details = "This route is fully optimized for standard traffic.";
+
+    if (accessibilityType === 'wheelchair' || accessibilityType === 'stroller') {
+      pathNodes = [currentLocation || 'Main Plaza Entrance', 'North Elevator 1A', 'Level 2 Ramp Bypass', destination || 'Block 102 Row 15'];
+      instructions = "Avoid Corridor B stairs. Take North Elevator 1A to Level 2 concourse, then proceed along the low-gradient VIP ramp bypass.";
+      details = "100% barrier-free route. Elevated ramps are wide with manual assistance spots if required.";
+    } else if (accessibilityType === 'sensory') {
+      pathNodes = [currentLocation || 'Main Plaza Entrance', 'West Garden Egress Path', 'Wembley Annex Corridor', destination || 'Block 102 Row 15'];
+      instructions = "Bypass central turnstile area noise. Follow the West Garden landscaped path and enter through Wembley Annex corridor entrance.";
+      details = "Low-noise corridor. Ambient volume is ~45dB compared to ~95dB on the main stairs. Ideal for sensory-sensitive attendees.";
+    }
+
+    return res.json({
+      success: true,
+      mode: 'simulation-fallback',
+      accessibilityType,
+      pathNodes,
+      instructions,
+      details,
+      congestionIndex: 18,
+      estimatedTimeMinutes: 6
+    });
+  }
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: `Calculate an optimized stadium routing plan based on accessibility constraints and digital twin nodes.
+Current Location: "${currentLocation}"
+Destination Seat/Block: "${destination}"
+Accessibility Constraint / Category: "${accessibilityType}" (Options: standard, wheelchair, sensory, stroller)
+Digital Twin Node States: ${JSON.stringify(activeNodes)}
+
+Provide the response in structured JSON format matching this schema:
+{
+  "pathNodes": string[], (list of path checkpoints/rooms)
+  "instructions": string, (step-by-step navigation directions)
+  "details": string, (explanation of why this fits the selected accessibility profile, e.g. elevator locations, low-gradient ramps, low-decibel paths)
+  "congestionIndex": number (0-100 indicating congestion on this specific path),
+  "estimatedTimeMinutes": number
+}`,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            pathNodes: { type: Type.ARRAY, items: { type: Type.STRING } },
+            instructions: { type: Type.STRING },
+            details: { type: Type.STRING },
+            congestionIndex: { type: Type.INTEGER },
+            estimatedTimeMinutes: { type: Type.INTEGER }
+          },
+          required: ['pathNodes', 'instructions', 'details', 'congestionIndex', 'estimatedTimeMinutes']
+        }
+      }
+    });
+
+    res.json({ ...JSON.parse(response.text || '{}'), success: true });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// API ROUTE 8B: AI Transit & Multi-Modal Transportation Coordination
+// ==========================================
+app.post('/api/ai/transit-recommend', async (req, res) => {
+  const { targetDestination, currentGate, activeCrowdLevel } = req.body;
+  const ai = getAI();
+
+  if (!ai) {
+    // Fallback simulation
+    return res.json({
+      success: true,
+      mode: 'simulation-fallback',
+      destination: targetDestination || 'Downtown Hub',
+      recommendations: [
+        {
+          mode: "Stadia Metro Link - Line 4",
+          estimatedTravelTimeMinutes: 22,
+          congestionStatus: "Heavy Congestion - 15m platform wait",
+          fareQuote: "$2.50",
+          sustainabilityRating: "Excellent",
+          smartActionText: "Direct boarding at Gate South. Requesting Municipal Authority for 2x extra train cars on standby."
+        },
+        {
+          mode: "Geofenced Electric Shuttle (Bus 14B)",
+          estimatedTravelTimeMinutes: 18,
+          congestionStatus: "Moderate - Departs every 5 minutes",
+          fareQuote: "Complimentary with ticket",
+          sustainabilityRating: "Excellent",
+          smartActionText: "Board at West Shuttle Plaza. Low crowd density detected here."
+        },
+        {
+          mode: "Stadia Eco-Pool Rideshare (Shared)",
+          estimatedTravelTimeMinutes: 30,
+          congestionStatus: "Slight Road Delays - High Surge pricing",
+          fareQuote: "$18.50 (with 40% pool discount)",
+          sustainabilityRating: "Good",
+          smartActionText: "Reroute to Sector C Rideshare Hub. Avoids Gate B choke points."
+        }
+      ],
+      carbonSavingsKg: 4.8
+    });
+  }
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: `Provide an optimized multi-modal transit coordination plan for stadium attendees departing for their target destination.
+Attendee Destination: "${targetDestination || 'Downtown Hub'}"
+Starting Location / Current Gate: "${currentGate || 'Gate A Concourse'}"
+Live Crowd Volume / Delay indicators: ${activeCrowdLevel} people in egress.
+
+Provide options for rail, electric shuttles, and rideshares, with smart coordination notes (such as advising the dispatchers to add cars).
+Provide the response in structured JSON format matching this schema:
+{
+  "recommendations": [
+    {
+      "mode": string,
+      "estimatedTravelTimeMinutes": number,
+      "congestionStatus": string,
+      "fareQuote": string,
+      "sustainabilityRating": "Excellent" | "Good" | "Fair",
+      "smartActionText": string (actionable advice for both attendee and coordinator)
+    }
+  ],
+  "carbonSavingsKg": number (estimated green benefit of taking public/shared transit over individual vehicle)
+}`,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            recommendations: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  mode: { type: Type.STRING },
+                  estimatedTravelTimeMinutes: { type: Type.INTEGER },
+                  congestionStatus: { type: Type.STRING },
+                  fareQuote: { type: Type.STRING },
+                  sustainabilityRating: { type: Type.STRING },
+                  smartActionText: { type: Type.STRING }
+                },
+                required: ['mode', 'estimatedTravelTimeMinutes', 'congestionStatus', 'fareQuote', 'sustainabilityRating', 'smartActionText']
+              }
+            },
+            carbonSavingsKg: { type: Type.NUMBER }
+          },
+          required: ['recommendations', 'carbonSavingsKg']
+        }
+      }
+    });
+
+    res.json({ ...JSON.parse(response.text || '{}'), success: true });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// API ROUTE 8C: AI Sustainability & Eco-Efficiency Optimizer
+// ==========================================
+app.post('/api/ai/sustainability-audit', async (req, res) => {
+  const { sensors } = req.body;
+  const ai = getAI();
+
+  if (!ai) {
+    return res.json({
+      success: true,
+      mode: 'simulation-fallback',
+      greenIndex: 84,
+      totalGridConsumptionKw: 1250,
+      solarGenerationKw: 340,
+      waterRecycledGallons: 4200,
+      prescriptiveAudit: [
+        {
+          category: "HVAC Peak Load Balancing",
+          severity: "Medium",
+          savingPotentialKw: 120,
+          prescriptiveTask: "BMS sensor S-HVAC-2 registers 28.4°C outflow, drawing peak utility power. Reroute 15% chiller capacity to West Wing buffer zones, cooling through natural thermal flow during low occupancy."
+        },
+        {
+          category: "Battery Storage Peak Shaving",
+          severity: "High",
+          savingPotentialKw: 250,
+          prescriptiveTask: "Discharge 250kW from the Southern Plaza solar-battery arrays during peak ingress (18:00 - 20:00) to flatten grid demand spikes."
+        },
+        {
+          category: "Graywater Recycling Flow",
+          severity: "Low",
+          savingPotentialKw: 0,
+          prescriptiveTask: "S-PLUMB-REST graywater sensor indicates normal capacity. Increase recycling valve flow to the turf irrigation buffer reservoir to ready for overnight lawn watering."
+        }
+      ],
+      carbonOffsetMetricTons: 1.2
+    });
+  }
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: `Analyze stadium building telemetry and solar output for green sustainability optimization.
+Active CMMS Sensors telemetry: ${JSON.stringify(sensors)}
+
+Formulate a prescriptive utility peak-shaving task audit to reduce energy consumption, maximize solar power utilization, and optimize water recycling.
+Provide the response in structured JSON format matching this schema:
+{
+  "greenIndex": number (0-100 green rating of stadium),
+  "totalGridConsumptionKw": number,
+  "solarGenerationKw": number,
+  "waterRecycledGallons": number,
+  "prescriptiveAudit": [
+    {
+      "category": string,
+      "severity": "Low" | "Medium" | "High",
+      "savingPotentialKw": number,
+      "prescriptiveTask": string
+    }
+  ],
+  "carbonOffsetMetricTons": number
+}`,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            greenIndex: { type: Type.INTEGER },
+            totalGridConsumptionKw: { type: Type.NUMBER },
+            solarGenerationKw: { type: Type.NUMBER },
+            waterRecycledGallons: { type: Type.NUMBER },
+            prescriptiveAudit: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  category: { type: Type.STRING },
+                  severity: { type: Type.STRING },
+                  savingPotentialKw: { type: Type.NUMBER },
+                  prescriptiveTask: { type: Type.STRING }
+                },
+                required: ['category', 'severity', 'savingPotentialKw', 'prescriptiveTask']
+              }
+            },
+            carbonOffsetMetricTons: { type: Type.NUMBER }
+          },
+          required: ['greenIndex', 'totalGridConsumptionKw', 'solarGenerationKw', 'waterRecycledGallons', 'prescriptiveAudit', 'carbonOffsetMetricTons']
+        }
+      }
+    });
+
+    res.json({ ...JSON.parse(response.text || '{}'), success: true });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// API ROUTE 8D: AI Universal Multilingual Support
+// ==========================================
+app.post('/api/ai/translate-assistance', async (req, res) => {
+  const { query, targetLanguage } = req.body;
+  const ai = getAI();
+
+  if (!ai) {
+    const langReplies: Record<string, string> = {
+      Spanish: "¡Hola! Como su guía del estadio, el Bloque 102 está cruzando el pasillo oeste. ¿Cómo puedo ayudarle más?",
+      French: "Bonjour! En tant que guide du stade, le bloc 102 se trouve de l'autre côté du hall ouest. Comment puis-je vous aider?",
+      German: "Hallo! Als Ihr Stadionführer befindet sich Block 102 auf der anderen Seite der Westconcourse. Wie kann ich Ihnen helfen?",
+      Mandarin: "您好！作为您的体育场指南，102区位于西大厅的对面。我还能为您提供什么帮助？",
+      Japanese: "こんにちは！スタジアムガイドとしてご案内します。ブロック102は西コンコースの向かいにあります。他にお手伝いできることはありますか？",
+      Hindi: "नमस्ते! आपके स्टेडियम गाइड के रूप में, ब्लॉक 102 पश्चिमी कॉन्कोर्स के पार है। क्या मैं आपकी कोई और सहायता कर सकता हूँ?",
+      Arabic: "مرحباً! بصفتي دليل الاستاد الخاص بك، يقع القسم 102 عبر الردهة الغربية. كيف يمكنني مساعدتك بشكل أكبر؟"
+    };
+
+    const reply = langReplies[targetLanguage] || `[Translated to ${targetLanguage || 'English'}]: Welcome! Block 102 is straight ahead across the West Concourse. Let me know if you need seat direction, food concession orders, or sensory quiet spaces.`;
+
+    return res.json({
+      success: true,
+      mode: 'simulation-fallback',
+      originalQuery: query,
+      translatedQuery: `[Query translated to English]: ${query}`,
+      assistantReply: reply
+    });
+  }
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: `You are the Stadia Multilingual Assistance Co-Pilot.
+A guest has entered a question in a foreign language or has requested assistance:
+Guest Question: "${query}"
+Target Language requested: "${targetLanguage || 'English'}"
+
+Translate the question to English internally, craft a friendly, polite, helpful answer in character as the stadium concierge (advising on wayfinding, tickets, concessions, restrooms, and accessibility services), and translate the response perfectly back to the target language.
+
+Provide the response in structured JSON format matching this schema:
+{
+  "translatedQuery": string, (the original query translated into English for staff visibility)
+  "assistantReply": string (the helpful concierge response translated perfectly to the target language)
+}`,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            translatedQuery: { type: Type.STRING },
+            assistantReply: { type: Type.STRING }
+          },
+          required: ['translatedQuery', 'assistantReply']
+        }
+      }
+    });
+
+    res.json({ ...JSON.parse(response.text || '{}'), success: true });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
+// API ROUTE 8E: AI Unified Operational Intelligence Briefing
+// ==========================================
+app.post('/api/ai/operational-briefing', async (req, res) => {
+  const { crowdVolume, weatherConditions, activeAlerts, sensorTelemetry, revenues } = req.body;
+  const ai = getAI();
+
+  if (!ai) {
+    return res.json({
+      success: true,
+      mode: 'simulation-fallback',
+      briefingTimestamp: new Date().toISOString(),
+      threatLevel: "Low",
+      summary: `The venue is currently operating under nominal load. Inflow density peaked at 74%. Dynamic weather forecasts show clear conditions with gentle 5mph winds. SCADA telemetry flagged Chiller HVAC-2 running slightly warm, with a technician already dispatched. Concourse concessions sales velocity is solid.`,
+      operationalBulletPoints: [
+        "Crowd management: Dispatch 5 extra stewards to Sector B West to prevent minor egress backups.",
+        "Sustainability: Keep batter-storage discharge active until 21:00.",
+        "Transportation: Alert municipal rail operator to maintain standard 4-minute line frequency."
+      ],
+      highPriorityAction: "Perform visual sensor confirmation on restroom plumbing flow valves in Block A."
+    });
+  }
+
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3.5-flash',
+      contents: `You are the chief AI Stadium Operational Intel Officer. Synthesize live stadium telemetry and generate an advanced decision support executive briefing.
+Live Telemetry:
+- Crowd Attendance Volume: ${crowdVolume} attendees
+- Active Weather Constraints: "${weatherConditions || 'Clear'}"
+- Active Facilities Alerts count: ${activeAlerts?.length || 0}
+- SCADA Telemetry sensor state: ${JSON.stringify(sensorTelemetry)}
+- Concession registers status: ${JSON.stringify(revenues)}
+
+Analyze the combined dataset to find hidden links (e.g. wet restrooms, slow ticket scanner throughput, high grid demand due to chillers). Recommend preventative measures.
+Provide the response in structured JSON format matching this schema:
+{
+  "briefingTimestamp": string,
+  "threatLevel": "Low" | "Medium" | "High" | "Critical",
+  "summary": string, (comprehensive narrative of overall operations and security posture)
+  "operationalBulletPoints": string[], (at least 3 precise strategic directives for stewards and technicians)
+  "highPriorityAction": string (the absolute most urgent preventive task)
+}`,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            briefingTimestamp: { type: Type.STRING },
+            threatLevel: { type: Type.STRING },
+            summary: { type: Type.STRING },
+            operationalBulletPoints: { type: Type.ARRAY, items: { type: Type.STRING } },
+            highPriorityAction: { type: Type.STRING }
+          },
+          required: ['briefingTimestamp', 'threatLevel', 'summary', 'operationalBulletPoints', 'highPriorityAction']
+        }
+      }
+    });
+
+    res.json({ ...JSON.parse(response.text || '{}'), success: true });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==========================================
 // API ROUTE 9: Multi-Turn Adaptive AI Co-Pilot
 // ==========================================
 app.post('/api/ai/chat', async (req, res) => {
@@ -801,6 +1199,133 @@ app.post('/api/ai/chat', async (req, res) => {
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
+});
+
+
+// ==========================================
+// API ROUTE 8F: City Transit Integration Service
+// ==========================================
+
+interface TransitService {
+  id: string;
+  name: string;
+  type: 'Train' | 'Bus';
+  frequencyMin: number;
+  delayMin: number;
+  status: 'Nominal' | 'Delayed' | 'Suspended';
+  activeAlert: string;
+  passengerCap: number;
+  route: string;
+  nextDepartureMin: number;
+}
+
+let transitDatabase = {
+  lastSynced: new Date().toISOString(),
+  services: [
+    { id: 'metro-4', name: 'Stadia Metro Link - Line 4', type: 'Train', frequencyMin: 4, delayMin: 0, status: 'Nominal', activeAlert: '', passengerCap: 1200, route: 'South Gate - Downtown Hub', nextDepartureMin: 2 },
+    { id: 'shuttle-14b', name: 'Municipal Shuttle - 14B', type: 'Bus', frequencyMin: 5, delayMin: 0, status: 'Nominal', activeAlert: '', passengerCap: 150, route: 'West Plaza - Sector C Park & Ride', nextDepartureMin: 3 },
+    { id: 'express-9', name: 'Express Rail - Line 9', type: 'Train', frequencyMin: 10, delayMin: 0, status: 'Nominal', activeAlert: '', passengerCap: 800, route: 'North Gate - Central Station', nextDepartureMin: 7 },
+    { id: 'shuttle-south', name: 'Egress Shuttle East - Line 5', type: 'Bus', frequencyMin: 8, delayMin: 0, status: 'Nominal', activeAlert: '', passengerCap: 120, route: 'South-East Loop', nextDepartureMin: 4 }
+  ] as TransitService[],
+  warnings: [] as { title: string; text: string; severity: 'low' | 'medium' | 'high'; affectedGates: string[]; suggestedAlternativeId: string }[]
+};
+
+// GET current transit status & alerts
+app.get('/api/transit/status', (req, res) => {
+  res.json({
+    success: true,
+    lastSynced: transitDatabase.lastSynced,
+    services: transitDatabase.services,
+    warnings: transitDatabase.warnings
+  });
+});
+
+// POST to trigger simulated sync with municipal APIs
+app.post('/api/transit/sync', async (req, res) => {
+  const { action, serviceId, delayMin, activeAlert, affectedGates, suggestedAlternativeId } = req.body;
+  const ai = getAI();
+
+  transitDatabase.lastSynced = new Date().toISOString();
+
+  // Increment/decrement nextDepartureMin realistically on sync to simulate real-time movement
+  transitDatabase.services = transitDatabase.services.map(s => {
+    let nextVal = s.nextDepartureMin - Math.floor(Math.random() * 2);
+    if (nextVal <= 0) {
+      nextVal = s.frequencyMin + s.delayMin;
+    }
+    return { ...s, nextDepartureMin: nextVal };
+  });
+
+  if (action === 'RESET') {
+    // Reset all delays & warnings
+    transitDatabase.services = transitDatabase.services.map(s => ({
+      ...s,
+      delayMin: 0,
+      status: 'Nominal',
+      activeAlert: ''
+    }));
+    transitDatabase.warnings = [];
+    return res.json({
+      success: true,
+      message: "All municipal transit networks restored to nominal schedule.",
+      lastSynced: transitDatabase.lastSynced,
+      services: transitDatabase.services,
+      warnings: transitDatabase.warnings
+    });
+  }
+
+  if (action === 'SIMULATE_DELAY' && serviceId) {
+    const service = transitDatabase.services.find(s => s.id === serviceId);
+    if (service) {
+      const delay = delayMin !== undefined ? parseInt(delayMin) : 25;
+      service.delayMin = delay;
+      service.status = delay > 45 ? 'Suspended' : 'Delayed';
+      service.activeAlert = activeAlert || `${service.name} experiencing a ${delay}-minute system delay.`;
+      
+      const defaultWarningText = `⚠️ HIGH PRIORITY EGRESS ADVISORY: ${service.name} is experiencing severe ${delay} min delays at the ${affectedGates?.join(' or ') || 'main exit gates'}. To reduce post-event bottleneck pressure, please DO NOT head to this gate. Use the recommended alternative: ${transitDatabase.services.find(s => s.id === suggestedAlternativeId)?.name || 'other transit modes'}.`;
+
+      let smartWarningText = defaultWarningText;
+
+      if (ai) {
+        try {
+          const response = await ai.models.generateContent({
+            model: 'gemini-3.5-flash',
+            contents: `The municipal transit line "${service.name}" is experiencing a severe ${delay} minute delay due to signal overload at the stadium exits. This is creating dangerous egress crowd bottleneck pressure. 
+            We are pushing an egress warning alert to stadium fans.
+            
+            Write a concise, high-priority, professional egress warning alert (maximum 3 sentences) that:
+            1. Clearly explains the transit delay at the affected gates: "${affectedGates?.join(', ') || 'South Exit Gates'}".
+            2. Proactively directs them to use alternative gateways or lines, specifically recommending: "${transitDatabase.services.find(s => s.id === suggestedAlternativeId)?.name || 'West Plaza Shuttle 14B'}".
+            3. Uses encouraging, clear sign-off to motivate fans to distribute crowd pressure.
+            
+            Provide only the plain text response.`
+          });
+          if (response.text && response.text.trim().length > 0) {
+            smartWarningText = response.text.trim();
+          }
+        } catch (e) {
+          console.error("Gemini failed to generate smart transit warning:", e);
+        }
+      }
+
+      // Add warning to list (replacing any existing for the same service to prevent duplicates)
+      transitDatabase.warnings = transitDatabase.warnings.filter(w => !w.title.includes(service.name));
+      transitDatabase.warnings.unshift({
+        title: `${service.name} Egress Delay Alert`,
+        text: smartWarningText,
+        severity: delay > 15 ? 'high' : 'medium',
+        affectedGates: affectedGates || ['South Gate'],
+        suggestedAlternativeId: suggestedAlternativeId || 'shuttle-14b'
+      });
+    }
+  }
+
+  res.json({
+    success: true,
+    lastSynced: transitDatabase.lastSynced,
+    services: transitDatabase.services,
+    warnings: transitDatabase.warnings
+  });
 });
 
 

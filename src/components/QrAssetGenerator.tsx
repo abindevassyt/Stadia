@@ -903,7 +903,7 @@ export default function QrAssetGenerator({ activeVenue, onUpdateSensors }: QrAss
 
       {/* TAB 1: SINGLE PROVISIONER */}
       {activeGenTab === 'single' && (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 flex-1 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 flex-1 items-start">
           {/* Form Inputs */}
           <div className="space-y-3 font-mono text-[10px]">
             <div>
@@ -1211,10 +1211,10 @@ export default function QrAssetGenerator({ activeVenue, onUpdateSensors }: QrAss
 
       {/* TAB 2: BATCH QR GENERATOR */}
       {activeGenTab === 'batch' && (
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 flex-1 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 items-start">
           
-          {/* Left Panel: Batch Specifications (xl:col-span-5) */}
-          <div className="xl:col-span-5 space-y-4 font-mono text-[10px]">
+          {/* Left Panel: Batch Specifications (lg:col-span-5) */}
+          <div className="lg:col-span-5 space-y-4 font-mono text-[10px]">
             <div className="bg-slate-950 p-4 border border-slate-850 rounded-xl space-y-3">
               <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider block">
                 1. Select Preset CMMS Sensors
@@ -1295,8 +1295,8 @@ export default function QrAssetGenerator({ activeVenue, onUpdateSensors }: QrAss
             </div>
           </div>
 
-          {/* Right Panel: Rendered Sticker Sheets (xl:col-span-7) */}
-          <div className="xl:col-span-7 bg-slate-950 border border-slate-850 p-4 rounded-xl space-y-4 flex flex-col min-h-[440px]">
+          {/* Right Panel: Rendered Sticker Sheets (lg:col-span-7) */}
+          <div className="lg:col-span-7 bg-slate-950 border border-slate-850 p-4 rounded-xl space-y-4 flex flex-col min-h-[440px]">
             
             {/* Batch Action Toolbar */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-900 pb-3">

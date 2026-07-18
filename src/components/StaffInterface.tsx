@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { VenueConfig, WorkOrder, AlertServiceLog } from '../types';
 import { Mic, Search, MapPin, ClipboardList, CheckSquare, Clock, ShieldAlert, Globe, Activity, RefreshCw, Sparkles, ShieldCheck, AlertTriangle } from 'lucide-react';
 import OfflineVenueMap from './OfflineVenueMap';
 import DensityHistoryChart from './DensityHistoryChart';
+import { useLanguage } from '../context/LanguageContext';
 
 interface StaffInterfaceProps {
   activeVenue: VenueConfig;
@@ -29,6 +30,8 @@ export default function StaffInterface({
   alertServiceLogs,
   onForecastRun
 }: StaffInterfaceProps) {
+  const { language, t } = useLanguage();
+
   // Voice Dictation States
   const [dictationText, setDictationText] = useState('Severe water leak and restroom overflow at Block A turnstiles concourse, causing safety slips risk.');
   const [isDictating, setIsDictating] = useState(false);
@@ -39,6 +42,19 @@ export default function StaffInterface({
   const [ragLang, setRagLang] = useState('English');
   const [isQueryingPlaybook, setIsQueryingPlaybook] = useState(false);
   const [playbookResult, setPlaybookResult] = useState<any>(null);
+
+  // Sync global language code with RAG playbook language selector
+  useEffect(() => {
+    const langMap: Record<string, string> = {
+      en: 'English',
+      de: 'German',
+      es: 'Spanish',
+      fr: 'French'
+    };
+    if (langMap[language]) {
+      setRagLang(langMap[language]);
+    }
+  }, [language]);
 
   // Proactive Alert Service Simulation State
   const [isSimulatingForecast, setIsSimulatingForecast] = useState(false);
@@ -254,14 +270,14 @@ export default function StaffInterface({
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-white tracking-tight flex items-center gap-2">
               <Search className="h-4 w-4 text-emerald-400" />
-              Offline Playbook Retrieval-Augmented Generation (RAG)
+              {t('rag.title')}
             </h3>
             <span className="text-[10px] bg-sky-500/10 border border-sky-500/20 text-sky-400 px-2 py-0.5 rounded font-mono">
               Local DB Cache Enabled
             </span>
           </div>
           <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-            Volunteers can query comprehensive manuals. Displays fast retrievals in less than 400 milliseconds, with automated localized multi-lingual translation layers.
+            {t('rag.desc')}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mb-4">
@@ -270,7 +286,7 @@ export default function StaffInterface({
                 type="text"
                 value={ragQuery}
                 onChange={(e) => setRagQuery(e.target.value)}
-                placeholder="Query emergency routes, spill protocol..."
+                placeholder={t('rag.placeholder')}
                 className="w-full bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-white focus:outline-none focus:border-emerald-500 font-sans"
                 id="playbook-rag-input"
               />
@@ -279,7 +295,7 @@ export default function StaffInterface({
               <select
                 value={ragLang}
                 onChange={(e) => setRagLang(e.target.value)}
-                className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-300 focus:outline-none"
+                className="flex-1 bg-slate-950 border border-slate-800 rounded-lg p-2 text-xs text-slate-300 focus:outline-none cursor-pointer"
               >
                 <option value="English">English</option>
                 <option value="German">German</option>
@@ -289,7 +305,7 @@ export default function StaffInterface({
               <button
                 onClick={handleQueryPlaybook}
                 disabled={isQueryingPlaybook}
-                className="bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-800 text-white p-2 rounded-lg transition-all"
+                className="bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-800 text-white p-2 rounded-lg transition-all border-none cursor-pointer"
                 id="btn-playbook-query"
               >
                 <Search className="h-4 w-4" />
@@ -300,35 +316,35 @@ export default function StaffInterface({
           <div className="flex flex-wrap gap-1.5 mb-4">
             <button
               onClick={() => setRagQuery('What is the emergency evacuation route protocol?')}
-              className="text-[9px] bg-slate-950 border border-slate-850 text-slate-400 hover:text-white px-2 py-1 rounded transition-all"
+              className="text-[9px] bg-slate-950 border border-slate-850 text-slate-400 hover:text-white px-2 py-1 rounded transition-all cursor-pointer"
             >
-              "Evacuation routes"
+              "{t('rag.suggest_1').replace('What is the ', '').replace('?', '')}"
             </button>
             <button
               onClick={() => setRagQuery('How to override turnstiles on power disruption?')}
-              className="text-[9px] bg-slate-950 border border-slate-850 text-slate-400 hover:text-white px-2 py-1 rounded transition-all"
+              className="text-[9px] bg-slate-950 border border-slate-850 text-slate-400 hover:text-white px-2 py-1 rounded transition-all cursor-pointer"
             >
-              "Turnstile failure"
+              "{t('rag.suggest_2').replace('How to ', '').replace('?', '')}"
             </button>
             <button
               onClick={() => setRagQuery('What to do during lightning thunderstorm delays?')}
-              className="text-[9px] bg-slate-950 border border-slate-850 text-slate-400 hover:text-white px-2 py-1 rounded transition-all"
+              className="text-[9px] bg-slate-950 border border-slate-850 text-slate-400 hover:text-white px-2 py-1 rounded transition-all cursor-pointer"
             >
-              "Lightning protocol"
+              "{t('rag.suggest_3').replace('What to do during ', '').replace('?', '')}"
             </button>
           </div>
 
           {playbookResult ? (
             <div className="space-y-3 font-mono text-xs text-slate-300">
               <div className="flex items-center justify-between bg-slate-950 border border-slate-850 px-3 py-2 rounded-lg text-[10px]">
-                <span className="text-slate-400">Database Source matched:</span>
+                <span className="text-slate-400">{t('rag.source_match')}:</span>
                 <span className="text-emerald-400 font-semibold">{playbookResult.sourceMatch || 'Preset Protocol Manual'}</span>
               </div>
               <div className="bg-slate-950 border border-slate-850 p-3.5 rounded-lg space-y-2">
                 <div className="flex items-center justify-between border-b border-slate-850 pb-1 text-[10px] text-slate-400 uppercase">
-                  <span>RAG Output ({ragLang}):</span>
+                  <span>{t('rag.output')} ({ragLang}):</span>
                   <span className={`font-semibold ${playbookResult.responseTimeMs < 400 ? 'text-emerald-400' : 'text-amber-400'}`}>
-                    {playbookResult.responseTimeMs}ms Response
+                    {playbookResult.responseTimeMs}ms {t('rag.response_time')}
                   </span>
                 </div>
                 <p className="text-slate-200 leading-relaxed text-xs">
@@ -339,14 +355,14 @@ export default function StaffInterface({
           ) : (
             <div className="h-[140px] border border-dashed border-slate-800 rounded-lg flex flex-col items-center justify-center text-center text-slate-500 p-4">
               <Globe className="h-8 w-8 text-slate-700 mb-2" />
-              <p className="text-xs">Submit queries to extract geofenced procedures translated instantly.</p>
+              <p className="text-xs">{t('rag.empty_state')}</p>
             </div>
           )}
         </div>
 
         <div className="text-[10px] text-slate-500 font-mono border-t border-slate-850 pt-3 mt-4 flex justify-between">
-          <span>RAG Standard: Vector-Match Hybrid Embeddings</span>
-          <span>Target SLA: &lt;400ms Response</span>
+          <span>{t('rag.standard')}</span>
+          <span>{t('rag.sla')}</span>
         </div>
       </div>
 

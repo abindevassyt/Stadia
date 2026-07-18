@@ -27,7 +27,7 @@ let auth: any;
 
 try {
   app = initializeApp(firebaseConfig);
-  db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+  db = getFirestore(app, (firebaseConfig as any).firestoreDatabaseId);
   auth = getAuth(app);
 
   // Validate connection to Firestore as mandated by strict skill constraint

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { UserPreferences } from '../types';
 import { usePreferences } from '../context/PreferencesContext';
+import { useLanguage } from '../context/LanguageContext';
+import { useScreenReader } from '../hooks/useScreenReader';
 import { 
   Sun, 
   Moon, 
@@ -22,7 +24,8 @@ import {
   Database,
   Terminal,
   UserCheck,
-  Lock
+  Lock,
+  Globe
 } from 'lucide-react';
 import { TEST_USER_RECORDS, TestUserRecord } from '../data/userSeed';
 import { db, isMockFirebase } from '../config/firebase';
@@ -30,6 +33,8 @@ import { doc, setDoc } from 'firebase/firestore';
 
 export default function SettingsInterface() {
   const { preferences, updatePreferences } = usePreferences();
+  const { language, setLanguage, t } = useLanguage();
+  const { speak, speakOnHover } = useScreenReader();
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
 
   // Developer & QA Seeding States
@@ -113,33 +118,39 @@ export default function SettingsInterface() {
     const nextTheme = preferences.theme === 'dark' ? 'light' : 'dark';
     updatePreferences({ theme: nextTheme });
     triggerSaveToast('Theme mode adjusted immediately');
+    speak(`Visual theme changed to ${nextTheme === 'dark' ? 'Low Light Twilight' : 'High Contrast Solar'}`);
   };
 
   const handleSelectRefresh = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const rate = parseInt(e.target.value, 10);
     updatePreferences({ refreshRate: rate });
     triggerSaveToast(`Telemetry stream refresh set to ${rate}s`);
+    speak(`Telemetry refresh interval set to ${rate} seconds`);
   };
 
   const handleToggleSounds = () => {
     const nextSounds = !preferences.alertSounds;
     updatePreferences({ alertSounds: nextSounds });
     triggerSaveToast(nextSounds ? 'Sound notifications unmuted' : 'Diagnostic alarms muted');
+    speak(nextSounds ? 'Sound notifications unmuted' : 'Diagnostic alarms muted');
   };
 
   const handleSelectFontSize = (size: 'normal' | 'large') => {
     updatePreferences({ fontSize: size });
     triggerSaveToast(`A11y typography scale set to ${size}`);
+    speak(`Typography display scale changed to ${size}`);
   };
 
   const handleSelectGeofence = (range: 'strict' | 'wide' | 'off') => {
     updatePreferences({ geofenceRange: range });
     triggerSaveToast(`Geofencing strictness: ${range.toUpperCase()}`);
+    speak(`Geofencing perimeter set to ${range === 'off' ? 'Off' : range === 'wide' ? 'Wide five hundred meters' : 'Strict fifty meters'}`);
   };
 
   const handleSelectCurrency = (currency: 'USD' | 'EUR' | 'GBP') => {
     updatePreferences({ currency });
     triggerSaveToast(`Financial ledger base: ${currency}`);
+    speak(`Financial base currency changed to ${currency === 'USD' ? 'US Dollars' : currency === 'EUR' ? 'Euros' : 'British Pounds'}`);
   };
 
   const triggerSaveToast = (msg: string) => {
@@ -149,6 +160,21 @@ export default function SettingsInterface() {
     }, 3000);
   };
 
+  const handleToggleScreenReader = () => {
+    const nextVal = !preferences.screenReaderEnabled;
+    updatePreferences({ screenReaderEnabled: nextVal });
+    
+    if (nextVal) {
+      setTimeout(() => {
+        speak("Screen reader mode enabled. Text to speech activated.", true);
+      }, 150);
+      triggerSaveToast("Screen reader mode enabled");
+    } else {
+      speak("Screen reader mode disabled.", true);
+      triggerSaveToast("Screen reader mode disabled");
+    }
+  };
+
   const handleResetDefaults = () => {
     updatePreferences({
       theme: 'dark',
@@ -156,7 +182,8 @@ export default function SettingsInterface() {
       refreshRate: 15,
       fontSize: 'normal',
       geofenceRange: 'wide',
-      currency: 'USD'
+      currency: 'USD',
+      screenReaderEnabled: false
     });
     triggerSaveToast('All preferences reset to Stadia OS factory presets');
   };
@@ -171,9 +198,9 @@ export default function SettingsInterface() {
             <Sliders className="h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white tracking-tight">System Settings & User Preferences</h2>
+            <h2 className="text-xl font-bold text-white tracking-tight">{t('settings.title')}</h2>
             <p className="text-xs text-slate-400 mt-1">
-              Customize local workspace parameters, accessibility displays, and telemetry behaviors.
+              {t('settings.subtitle')}
             </p>
           </div>
         </div>
@@ -204,7 +231,7 @@ export default function SettingsInterface() {
               ) : (
                 <Sun className="h-4 w-4 text-amber-500" />
               )}
-              <h3 className="text-xs uppercase tracking-widest font-mono font-bold text-slate-300">Visual Color Theme</h3>
+              <h3 className="text-xs uppercase tracking-widest font-mono font-bold text-slate-300">{t('settings.theme')}</h3>
             </div>
             <span className="text-[9px] font-mono text-slate-500">Persists in Storage</span>
           </div>
@@ -216,6 +243,7 @@ export default function SettingsInterface() {
           <div className="flex items-center gap-3 pt-2">
             <button
               onClick={handleToggleTheme}
+              {...speakOnHover("Low Light Twilight Theme", preferences.theme === 'dark' ? "Currently Active" : "Click to select")}
               className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
                 preferences.theme === 'dark'
                   ? 'bg-slate-950 border-emerald-500/40 text-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.05)]'
@@ -228,6 +256,7 @@ export default function SettingsInterface() {
             </button>
             <button
               onClick={handleToggleTheme}
+              {...speakOnHover("High Contrast Solar Theme", preferences.theme === 'light' ? "Currently Active" : "Click to select")}
               className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
                 preferences.theme === 'light'
                   ? 'bg-white border-slate-300 text-slate-900 shadow-[0_4px_12px_rgba(0,0,0,0.05)]'
@@ -238,6 +267,60 @@ export default function SettingsInterface() {
               <Sun className="h-3.5 w-3.5" />
               High-Contrast Solar (Light)
             </button>
+          </div>
+        </div>
+
+        {/* 1B. Language & Localization Selection */}
+        <div className="bg-slate-900 border border-slate-850 p-6 rounded-2xl space-y-4" id="language-selection-card">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Globe className="h-4 w-4 text-emerald-400" />
+              <h3 className="text-xs uppercase tracking-widest font-mono font-bold text-slate-300">
+                {t('settings.language')}
+              </h3>
+            </div>
+            <span className="text-[9px] font-mono text-slate-500">Global i18n</span>
+          </div>
+
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Select the primary language layer. All operational metrics, system headings, and retrieved playbook protocols dynamically update.
+          </p>
+
+          <div className="pt-1">
+            <label className="text-[10px] text-slate-500 font-mono block mb-1.5 uppercase font-semibold">
+              {t('settings.select_language')}
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { code: 'en', name: 'English (US/UK)' },
+                { code: 'de', name: 'Deutsch (German)' },
+                { code: 'es', name: 'Español (Spanish)' },
+                { code: 'fr', name: 'Français (French)' }
+              ].map(lang => (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    setLanguage(lang.code as any);
+                    triggerSaveToast(`Workspace language updated to ${lang.name}`);
+                    speak(`Workspace language updated to ${lang.name}`);
+                  }}
+                  {...speakOnHover(`Language: ${lang.name}`, language === lang.code ? "Currently Active" : "Click to select")}
+                  className={`py-2 px-3 rounded-xl text-xs font-semibold transition-all cursor-pointer border flex items-center justify-between gap-1 ${
+                    language === lang.code
+                      ? 'bg-slate-950 border-emerald-500/40 text-emerald-400 font-bold'
+                      : 'bg-slate-800/40 border-slate-700 text-slate-400 hover:text-white'
+                  }`}
+                  id={`settings-lang-${lang.code}`}
+                >
+                  <span className="truncate">{lang.name}</span>
+                  {language === lang.code && (
+                    <span className="text-[8px] bg-emerald-500/10 text-emerald-400 px-1.5 py-0.5 rounded border border-emerald-500/20 uppercase font-mono tracking-wider shrink-0">
+                      Active
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -262,6 +345,7 @@ export default function SettingsInterface() {
           <div className="flex pt-2">
             <button
               onClick={handleToggleSounds}
+              {...speakOnHover("Diagnostic Audio Alarms", preferences.alertSounds ? "Currently Active. Click to mute." : "Currently Muted. Click to activate.")}
               className={`w-full py-3 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer border flex items-center justify-center gap-2.5 ${
                 preferences.alertSounds
                   ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-400'
@@ -303,6 +387,7 @@ export default function SettingsInterface() {
             <select
               value={preferences.refreshRate}
               onChange={handleSelectRefresh}
+              {...speakOnHover("BMS Telemetry Refresh Interval", `Currently set to ${preferences.refreshRate} seconds`)}
               className="w-full bg-slate-950 border border-slate-850 text-slate-200 p-3 rounded-xl text-xs font-medium focus:border-emerald-500 outline-none transition-all cursor-pointer"
               id="settings-refresh-rate"
             >
@@ -330,6 +415,7 @@ export default function SettingsInterface() {
           <div className="flex items-center gap-3 pt-2">
             <button
               onClick={() => handleSelectFontSize('normal')}
+              {...speakOnHover("Compact Typography Scale", preferences.fontSize === 'normal' ? "Currently Active" : "Click to select")}
               className={`flex-1 py-3 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
                 preferences.fontSize === 'normal'
                   ? 'bg-slate-950 border-emerald-500/40 text-emerald-400'
@@ -341,6 +427,7 @@ export default function SettingsInterface() {
             </button>
             <button
               onClick={() => handleSelectFontSize('large')}
+              {...speakOnHover("Enlarged Typography Scale", preferences.fontSize === 'large' ? "Currently Active" : "Click to select")}
               className={`flex-1 py-3 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer border ${
                 preferences.fontSize === 'large'
                   ? 'bg-slate-950 border-emerald-500/40 text-emerald-400'
@@ -349,6 +436,47 @@ export default function SettingsInterface() {
               id="settings-font-large"
             >
               Enlarged Grid (High Visibility)
+            </button>
+          </div>
+        </div>
+
+        {/* 4B. Screen Reader Mode */}
+        <div className="bg-slate-900 border border-slate-850 p-6 rounded-2xl space-y-4" id="screen-reader-card">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Volume2 className="h-4 w-4 text-emerald-400" />
+              <h3 className="text-xs uppercase tracking-widest font-mono font-bold text-slate-300">
+                {t('settings.screen_reader')}
+              </h3>
+            </div>
+            <span className="text-[9px] font-mono text-slate-500">A11y Text-To-Speech</span>
+          </div>
+
+          <p className="text-xs text-slate-400 leading-relaxed">
+            {t('settings.screen_reader_desc')}
+          </p>
+
+          <div className="flex pt-2">
+            <button
+              onClick={handleToggleScreenReader}
+              className={`w-full py-3 px-4 rounded-xl text-xs font-semibold transition-all cursor-pointer border flex items-center justify-center gap-2.5 ${
+                preferences.screenReaderEnabled
+                  ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-400'
+                  : 'bg-slate-950 border-slate-800 text-slate-500 hover:text-slate-300'
+              }`}
+              id="settings-toggle-screen-reader"
+            >
+              {preferences.screenReaderEnabled ? (
+                <>
+                  <Volume2 className="h-4 w-4 text-emerald-400 animate-pulse" />
+                  Screen Reader Enabled
+                </>
+              ) : (
+                <>
+                  <VolumeX className="h-4 w-4" />
+                  Screen Reader Disabled
+                </>
+              )}
             </button>
           </div>
         </div>

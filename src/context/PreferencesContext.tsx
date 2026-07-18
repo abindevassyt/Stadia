@@ -13,7 +13,8 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   refreshRate: 15,
   fontSize: 'normal',
   geofenceRange: 'wide',
-  currency: 'USD'
+  currency: 'USD',
+  screenReaderEnabled: false
 };
 
 const PreferencesContext = createContext<PreferencesContextType | undefined>(undefined);

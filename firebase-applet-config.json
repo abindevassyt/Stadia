@@ -1,9 +1,11 @@
 {
-  "apiKey": "AIzaSyFakeKey_ForCompilationPass_2026",
-  "authDomain": "stadia-os-sandbox.firebaseapp.com",
-  "projectId": "stadia-os-sandbox",
-  "storageBucket": "stadia-os-sandbox.appspot.com",
-  "messagingSenderId": "123456789012",
-  "appId": "1:123456789012:web:abcdef1234567890",
-  "firestoreDatabaseId": "(default)"
+  "projectId": "balmy-chain-sxhgq",
+  "appId": "1:971421794640:web:f7296824d70d1f81c56c55",
+  "apiKey": "AIzaSyDrDKD3peg7gIczzcNz4cuGPE14AEEmaK0",
+  "authDomain": "balmy-chain-sxhgq.firebaseapp.com",
+  "storageBucket": "balmy-chain-sxhgq.firebasestorage.app",
+  "messagingSenderId": "971421794640",
+  "measurementId": "",
+  "oAuthClientId": "971421794640-2ac3ljo7hca14pns4jlt82hb2qh95nnm.apps.googleusercontent.com",
+  "recaptchaSiteKey": ""
 }

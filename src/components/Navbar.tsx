@@ -45,28 +45,30 @@ export default function Navbar({
   ];
 
   return (
-    <header className="bg-slate-950 border-b border-slate-800 sticky top-0 z-40 px-6 py-4 shadow-xl" id="stadia-os-header">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <header className="bg-slate-950 border-b border-slate-800 sticky top-0 z-40 px-4 py-3 md:px-6 md:py-4 shadow-xl" id="stadia-os-header">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
         {/* Logo and Venue Name */}
-        <div className="flex items-center gap-3">
-          <div className="bg-emerald-500 text-white p-2 rounded-xl shadow-[0_0_12px_rgba(16,185,129,0.3)] shrink-0">
-            <Cpu className="h-5 w-5 animate-pulse" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-              STADIA
-              <span className="text-[10px] bg-slate-850 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded font-mono">
-                OS Core v2.5
-              </span>
-            </h1>
-            <p className="text-xs text-slate-400 font-medium font-mono">
-              Venue Ingested: <span className="text-slate-300 font-bold">{activeVenueName}</span>
-            </p>
+        <div className="flex items-center gap-3 justify-between md:justify-start">
+          <div className="flex items-center gap-3">
+            <div className="bg-emerald-500 text-white p-2 rounded-xl shadow-[0_0_12px_rgba(16,185,129,0.3)] shrink-0">
+              <Cpu className="h-5 w-5 animate-pulse" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                STADIA
+                <span className="text-[10px] bg-slate-850 text-emerald-400 border border-emerald-500/20 px-1.5 py-0.5 rounded font-mono">
+                  OS Core v2.5
+                </span>
+              </h1>
+              <p className="text-xs text-slate-400 font-medium font-mono">
+                Venue Ingested: <span className="text-slate-300 font-bold">{activeVenueName}</span>
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Zero-Trust Security Scope Guard Indicator */}
-        <div className="bg-slate-900 border border-slate-850 rounded-xl px-4 py-2 flex items-center gap-3 max-w-sm md:max-w-md shrink-0">
+        <div className="bg-slate-900 border border-slate-850 rounded-xl px-4 py-2 flex items-center gap-3 w-full md:w-auto max-w-none md:max-w-md shrink-0">
           <div className={`p-1.5 rounded-lg shrink-0 ${activePersona.category === 'Fan' ? 'bg-amber-500/10' : 'bg-emerald-500/10'}`}>
             {activePersona.category === 'Fan' ? (
               <ShieldAlert className="h-4 w-4 text-amber-400 animate-pulse" />
@@ -74,14 +76,14 @@ export default function Navbar({
               <Shield className="h-4 w-4 text-emerald-400" />
             )}
           </div>
-          <div className="text-[11px] leading-relaxed">
+          <div className="text-[11px] leading-relaxed w-full">
             <div className="flex items-center gap-1.5 font-mono">
               <span className="text-slate-400 font-semibold uppercase">Zero-Trust Scope:</span>
               <span className={`font-bold ${activePersona.category === 'Fan' ? 'text-amber-400' : 'text-emerald-400'}`}>
                 {activePersona.category === 'Fan' ? 'SANDBOX ISOLATED' : 'SENSITIVE ACCESS'}
               </span>
             </div>
-            <p className="text-slate-500 text-[10px] mt-0.5">
+            <p className="text-slate-500 text-[10px] mt-0.5 hidden sm:block">
               {activePersona.category === 'Fan' 
                 ? 'Attendee scope lock. CMMS SCADA telemetry, financial ledger settlements, and work orders are fully encrypted and restricted.' 
                 : `Authorized sectors: ${activePersona.allowedSectors.join(', ')}. Security clearance Level ${activePersona.clearanceLevel}.`
@@ -91,11 +93,11 @@ export default function Navbar({
         </div>
 
         {/* Persona Switcher & Logout Row */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="relative shrink-0">
+        <div className="flex items-center justify-between md:justify-end gap-3 shrink-0">
+          <div className="relative shrink-0 flex-1 md:flex-initial">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="bg-slate-900 border border-slate-800 hover:border-emerald-500 text-white rounded-xl px-4 py-2.5 text-xs font-semibold flex items-center gap-2.5 transition-all shadow-md"
+              className="w-full md:w-auto bg-slate-900 border border-slate-800 hover:border-emerald-500 text-white rounded-xl px-4 py-2.5 text-xs font-semibold flex items-center justify-between md:justify-start gap-2.5 transition-all shadow-md"
               id="persona-switcher-dropdown"
             >
               <div className="bg-emerald-500/10 text-emerald-400 p-1 rounded-md">

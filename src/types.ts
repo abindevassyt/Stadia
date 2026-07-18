@@ -26,6 +26,8 @@ export interface CMMSSensor {
   value: string;
   metric: string;
   lastReading: string;
+  batteryLevel?: number; // percentage (0-100)
+  signalStrength?: number; // signal in dBm (-100 to -30) or RSSI
 }
 
 export interface VenueConfig {
@@ -132,6 +134,7 @@ export interface UserPreferences {
   fontSize: 'normal' | 'large';
   geofenceRange: 'strict' | 'wide' | 'off';
   currency: 'USD' | 'EUR' | 'GBP';
+  screenReaderEnabled: boolean;
 }
 
 export interface AlertServiceLog {

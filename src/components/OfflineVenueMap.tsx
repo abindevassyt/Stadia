@@ -435,10 +435,10 @@ export default function OfflineVenueMap({ activeVenue, onAddWorkOrder, currentUs
       )}
 
       {/* Map visualizer + Control Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         {/* Left Area: interactive topological node drawing */}
-        <div className="xl:col-span-8 bg-slate-950 border border-slate-850 rounded-xl p-4 flex flex-col relative overflow-hidden min-h-[440px]">
+        <div className="lg:col-span-8 bg-slate-950 border border-slate-850 rounded-xl p-4 flex flex-col relative overflow-hidden min-h-[440px]">
           
           {/* Overlay Status info */}
           <div className="absolute top-3 left-3 z-10 flex items-center gap-2 bg-slate-900/90 border border-slate-800 backdrop-blur-md px-3 py-1.5 rounded-lg text-[10px] font-mono text-slate-400">
@@ -664,7 +664,7 @@ export default function OfflineVenueMap({ activeVenue, onAddWorkOrder, currentUs
         </div>
 
         {/* Right Area: Wayfinding routing controls & Offline Incident Outbox Queue */}
-        <div className="xl:col-span-4 space-y-6">
+        <div className="lg:col-span-4 space-y-6">
 
           {/* Section 1: Wayfinding Calculator */}
           <div className="bg-slate-950 border border-slate-850 p-4 rounded-xl space-y-4">

@@ -35,11 +35,12 @@ import {
   Chrome, 
   Compass, 
   AlertCircle,
-  ShieldAlert
+  ShieldAlert,
+  AlertTriangle
 } from 'lucide-react';
 
 interface AuthSystemProps {
-  onLoginSuccess: (persona: Persona) => void;
+  onLoginSuccess: (persona: Persona, googleAccessToken?: string) => void;
 }
 
 export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
@@ -63,6 +64,44 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
   // Interactive OAuth Flow States
   const [oauthProvider, setOauthProvider] = useState<string | null>(null);
   const [oauthStep, setOauthStep] = useState<'idle' | 'connecting' | 'authorizing' | 'success'>('idle');
+
+  // Google Auth Troubleshooting State
+  const [googleAuthErrorDetails, setGoogleAuthErrorDetails] = useState<{
+    code: string;
+    message: string;
+    showBypass: boolean;
+  } | null>(null);
+
+  // Trigger simulated bypass SSO flow
+  const triggerMockGoogleSSO = () => {
+    setOauthProvider('Google (Simulated Bypass)');
+    setOauthStep('connecting');
+    setGoogleAuthErrorDetails(null);
+    setAuthError(null);
+    
+    setTimeout(() => {
+      setOauthStep('authorizing');
+    }, 1000);
+
+    setTimeout(() => {
+      setOauthStep('success');
+    }, 2000);
+
+    setTimeout(() => {
+      const oauthPersona: Persona = {
+        id: `oauth-google-bypass-${Date.now()}`,
+        name: 'Alex Mercer (Google Sandbox)',
+        category: 'Fan',
+        roleName: 'Attendee (SSO: Google)',
+        clearanceLevel: 0,
+        allowedSectors: ['Stands Block 102 (Seat Row L5)'],
+        permissions: ['VIEW_BLUE_DOT_ROUTE', 'IN_SEAT_PREORDER', 'CHAT_CONCIERGE', 'TRANSFER_TICKET']
+      };
+      onLoginSuccess(oauthPersona, 'mock-google-token-stadia-os-12345');
+      setOauthProvider(null);
+      setOauthStep('idle');
+    }, 3000);
+  };
 
   // List of corporate staff (all non-Fan personas)
   const corporateRoster = ALL_PERSONAS.filter(p => p.category !== 'Fan');
@@ -211,11 +250,20 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
     try {
       if (!isMockFirebase && auth) {
         const provider = new GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/drive');
+        provider.addScope('https://www.googleapis.com/auth/drive.file');
+        provider.addScope('https://www.googleapis.com/auth/drive.readonly');
+        provider.addScope('https://www.googleapis.com/auth/forms.body');
+        provider.addScope('https://www.googleapis.com/auth/forms.body.readonly');
+        provider.addScope('https://www.googleapis.com/auth/forms.responses.readonly');
 
         setOauthStep('authorizing');
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
         const userId = user.uid;
+
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const accessToken = credential?.accessToken || undefined;
 
         const ssoPersona: Persona = {
           id: userId,
@@ -251,7 +299,7 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
 
         setOauthStep('success');
         setTimeout(() => {
-          onLoginSuccess(ssoPersona);
+          onLoginSuccess(ssoPersona, accessToken);
           setOauthProvider(null);
           setOauthStep('idle');
         }, 1500);
@@ -276,13 +324,22 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
             allowedSectors: ['Stands Block 102 (Seat Row L5)'],
             permissions: ['VIEW_BLUE_DOT_ROUTE', 'IN_SEAT_PREORDER', 'CHAT_CONCIERGE', 'TRANSFER_TICKET']
           };
-          onLoginSuccess(oauthPersona);
+          onLoginSuccess(oauthPersona, 'mock-google-token-stadia-os-12345');
           setOauthProvider(null);
           setOauthStep('idle');
         }, 5000);
       }
     } catch (err: any) {
-      setAuthError(err.message || 'Google Authentication failed.');
+      console.error("Google Auth Error:", err);
+      const errorCode = err.code || 'unknown';
+      const errorMessage = err.message || String(err);
+      
+      setGoogleAuthErrorDetails({
+        code: errorCode,
+        message: errorMessage,
+        showBypass: true
+      });
+      setAuthError(`Google Authentication Failed: ${errorCode}. Click the troubleshooting link below or use the simulated fallback option.`);
       setOauthProvider(null);
       setOauthStep('idle');
     }
@@ -553,6 +610,55 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                     </button>
                   </div>
 
+                  {/* Google Auth Troubleshooting Panel */}
+                  {googleAuthErrorDetails && (
+                    <div className="mt-4 p-4 bg-amber-950/20 border border-amber-900/30 rounded-xl space-y-3" id="google-sso-troubleshooter">
+                      <div className="flex items-start gap-2.5">
+                        <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0 mt-0.5 animate-pulse" />
+                        <div>
+                          <h4 className="text-xs font-bold text-amber-300">Google SSO Handshake Help</h4>
+                          <span className="text-[9px] font-mono text-slate-400 block mt-0.5">
+                            Error Code: {googleAuthErrorDetails.code}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="text-[11px] text-slate-300 space-y-2 pl-6 font-sans leading-relaxed">
+                        {googleAuthErrorDetails.code.includes('operation-not-allowed') ? (
+                          <>
+                            <p className="font-semibold text-amber-400">Google Sign-in is Disabled in Firebase Auth:</p>
+                            <p>To fix this, open your <strong>Firebase Console</strong> under <strong>Authentication &gt; Sign-in method</strong>, add the <strong>Google</strong> provider, and click Enable.</p>
+                          </>
+                        ) : googleAuthErrorDetails.code.includes('popup-blocked') ? (
+                          <>
+                            <p className="font-semibold text-amber-400">Browser Blocked the Pop-up:</p>
+                            <p>Look for a pop-up blocker icon on the right side of your browser address bar and select "Always allow popups from this site".</p>
+                          </>
+                        ) : (
+                          <>
+                            <p className="font-semibold text-amber-400">Sandbox Iframe Storage Restriction:</p>
+                            <p>Standard Firebase popup SSO gets blocked inside cross-origin preview frames due to default browser cookie rules.</p>
+                            <p><strong>Option A:</strong> Try opening this application in a <button type="button" onClick={() => window.open(window.location.origin, '_blank')} className="text-emerald-400 hover:underline cursor-pointer font-semibold inline">direct browser tab</button> where popup cookies can initialize correctly.</p>
+                          </>
+                        )}
+                      </div>
+
+                      {googleAuthErrorDetails.showBypass && (
+                        <div className="pt-2.5 border-t border-slate-800 flex flex-col gap-2">
+                          <p className="text-[10px] text-slate-400 font-mono">Bypass Google popup constraints and continue reviewing the Workspace integrations:</p>
+                          <button
+                            type="button"
+                            onClick={triggerMockGoogleSSO}
+                            className="w-full bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 hover:text-emerald-300 font-bold text-xs py-2 rounded-lg flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                          >
+                            <Chrome className="h-3.5 w-3.5" />
+                            Utilize Simulated Google SSO Bypass
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   {/* Security Policy Badge */}
                   <div className="mt-4 p-2.5 bg-emerald-950/10 border border-emerald-900/20 rounded-lg text-[10px] text-emerald-400/80 font-mono flex items-start gap-2">
                     <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-400" />
@@ -721,7 +827,7 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                   {oauthStep === 'success' && 'SSO Auth Handshake Success!'}
                 </h3>
 
-                <p className="text-xs text-slate-400 leading-relaxed font-mono bg-slate-950/80 p-3 border border-slate-850 rounded-lg w-full text-left space-y-1">
+                <div className="text-xs text-slate-400 leading-relaxed font-mono bg-slate-950/80 p-3 border border-slate-850 rounded-lg w-full text-left space-y-1">
                   {oauthStep === 'connecting' && (
                     <>
                       <div className="text-emerald-400 font-bold">[SYS_LOAD] Initializing secure handshake with {oauthProvider}...</div>
@@ -744,7 +850,7 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                       <div className="text-slate-500 font-mono text-[10px] text-slate-400">Initializing Secure Attendee Ticket Wallet.</div>
                     </>
                   )}
-                </p>
+                </div>
 
                 {oauthStep !== 'success' && (
                   <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono animate-pulse">

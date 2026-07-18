@@ -9,17 +9,26 @@ import ExecutiveInterface from './components/ExecutiveInterface';
 import SettingsInterface from './components/SettingsInterface';
 import AuthSystem from './components/AuthSystem';
 import AIAssistant from './components/AIAssistant';
+import AIAdvisorySuite from './components/AIAdvisorySuite';
+import GoogleFormsHub from './components/GoogleFormsHub';
+import ARNavigationModule from './components/ARNavigationModule';
+import VoiceAssistant from './components/VoiceAssistant';
 import { PRESET_VENUES, ALL_PERSONAS } from './data/venues';
 import { VenueConfig, Persona, WorkOrder, DigitalTwinNode, CMMSSensor, UserPreferences, AlertServiceLog } from './types';
 import { ShieldCheck, Lock, Layers, UserCheck, Settings, AlertOctagon, HelpCircle, AlertTriangle } from 'lucide-react';
 import { useRoleNavigation } from './hooks/useRoleNavigation';
 import { usePreferences } from './context/PreferencesContext';
+import { useLanguage } from './context/LanguageContext';
+import { useScreenReader } from './hooks/useScreenReader';
 
 export default function App() {
+  const { t } = useLanguage();
+  const { speak, speakOnHover } = useScreenReader();
   const [venues, setVenues] = useState<VenueConfig[]>(PRESET_VENUES);
   const [activeVenue, setActiveVenue] = useState<VenueConfig>(PRESET_VENUES[0]);
   const [activePersona, setActivePersona] = useState<Persona>(ALL_PERSONAS[ALL_PERSONAS.length - 1]); // Default to Fan John Doe
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [googleAccessToken, setGoogleAccessToken] = useState<string | undefined>(undefined);
 
   // Proactive 'Alert Trigger' Service State
   const [bottleneckThreshold, setBottleneckThreshold] = useState<number>(75);
@@ -140,7 +149,7 @@ export default function App() {
     }
   ]);
 
-  const [activeTab, setActiveTab] = useState<'vcp' | 'fan' | 'staff' | 'cmms' | 'executive' | 'settings'>('fan');
+  const [activeTab, setActiveTab] = useState<'vcp' | 'fan' | 'staff' | 'forms_hub' | 'ar_nav' | 'cmms' | 'executive' | 'settings' | 'ai_hub'>('ai_hub');
 
   const { preferences, updatePreferences, toggleTheme } = usePreferences();
 
@@ -148,6 +157,9 @@ export default function App() {
     // Sync active venue state
     const synced = venues.find(v => v.id === venue.id) || venue;
     setActiveVenue(synced);
+    if (preferences.screenReaderEnabled) {
+      speak(`Active arena changed to ${synced.name} located in ${synced.city}`);
+    }
   };
 
   const handleUpdateNodes = (updatedNodes: DigitalTwinNode[]) => {
@@ -212,6 +224,10 @@ export default function App() {
         insights
       });
 
+      if (preferences.screenReaderEnabled) {
+        speak(`Attention! Crowd density alert. Predicted density of ${densityIndex}% exceeds the threshold of ${bottleneckThreshold}%. Bottlenecks predicted at ${bottlenecks.join(', ') || 'the concourse'}. Recommended reroute: ${recommendedReroute}`);
+      }
+
       if (preferences.alertSounds) {
         try {
           const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -245,8 +261,8 @@ export default function App() {
   };
 
   // Zero-Trust Access Rules validation
-  const checkAccess = (tab: 'vcp' | 'fan' | 'staff' | 'cmms' | 'executive' | 'settings'): { allowed: boolean; reason?: string } => {
-    if (tab === 'vcp' || tab === 'fan' || tab === 'settings') return { allowed: true };
+  const checkAccess = (tab: 'vcp' | 'fan' | 'staff' | 'forms_hub' | 'ar_nav' | 'cmms' | 'executive' | 'settings' | 'ai_hub'): { allowed: boolean; reason?: string } => {
+    if (tab === 'vcp' || tab === 'fan' || tab === 'settings' || tab === 'ai_hub' || tab === 'forms_hub' || tab === 'ar_nav') return { allowed: true };
     
     if (tab === 'staff') {
       // Must have staff level clearance or higher
@@ -295,8 +311,9 @@ export default function App() {
   if (!isAuthenticated) {
     return (
       <AuthSystem
-        onLoginSuccess={(persona) => {
+        onLoginSuccess={(persona, token) => {
           setActivePersona(persona);
+          if (token) setGoogleAccessToken(token);
           setIsAuthenticated(true);
         }}
       />
@@ -311,10 +328,16 @@ export default function App() {
         activePersona={activePersona}
         onChangePersona={(p) => {
           setActivePersona(p);
+          if (preferences.screenReaderEnabled) {
+            speak(`Switched persona to ${p.name}, role title ${p.roleName}`);
+          }
           // If active tab becomes locked under new persona, move them to Fan page
           const access = checkAccess(activeTab);
           if (!access.allowed) {
             setActiveTab('fan');
+            if (preferences.screenReaderEnabled) {
+              speak(`Access level restricted. Redirecting to attendee hub.`);
+            }
           }
         }}
         activeVenueName={activeVenue.name}
@@ -387,18 +410,25 @@ export default function App() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8">
         
         {/* Navigation Tabs Bar */}
-        <div className="flex border-b border-slate-800 mb-8 overflow-x-auto scrollbar-none scroll-smooth">
+        <div className="flex border-b border-slate-800 mb-8 overflow-x-auto scrollbar-thin pb-1.5 scroll-smooth">
           {[
-            { id: 'vcp', label: 'VCP Ingestion Pipeline' },
-            { id: 'fan', label: 'Fan & Guest Portal' },
-            { id: 'staff', label: 'Staff & Volunteer hub' },
-            { id: 'cmms', label: 'CMMS Facilities SCADA' },
-            { id: 'executive', label: 'Executive Operations P&L' },
-            { id: 'settings', label: 'System Settings' }
+            { id: 'ai_hub', label: t('nav.ai_hub') },
+            { id: 'vcp', label: t('nav.vcp') },
+            { id: 'fan', label: t('nav.fan') },
+            { id: 'ar_nav', label: t('nav.ar_nav') },
+            { id: 'staff', label: t('nav.staff') },
+            { id: 'forms_hub', label: t('nav.forms_hub') },
+            { id: 'cmms', label: t('nav.cmms') },
+            { id: 'executive', label: t('nav.executive') },
+            { id: 'settings', label: t('nav.settings') }
           ].map(tab => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => {
+                setActiveTab(tab.id as any);
+                speak(`Navigated to ${tab.label}`);
+              }}
+              {...speakOnHover(`Tab: ${tab.label}`, activeTab === tab.id ? "Currently Active" : "Click to view")}
               className={`px-4 py-3.5 border-b-2 font-medium text-xs tracking-wider uppercase transition-all shrink-0 flex items-center gap-1.5 ${
                 activeTab === tab.id
                   ? 'border-emerald-500 text-emerald-400 font-bold'
@@ -488,6 +518,12 @@ export default function App() {
                   {activeTab === 'fan' && (
                     <FanInterface activeVenue={activeVenue} onForecastRun={handleForecastRun} />
                   )}
+                  {activeTab === 'ar_nav' && (
+                    <ARNavigationModule activeVenue={activeVenue} />
+                  )}
+                  {activeTab === 'forms_hub' && (
+                    <GoogleFormsHub googleAccessToken={googleAccessToken} activePersona={activePersona} />
+                  )}
                   {activeTab === 'staff' && (
                     <StaffInterface
                       activeVenue={activeVenue}
@@ -518,6 +554,9 @@ export default function App() {
                   {activeTab === 'settings' && (
                     <SettingsInterface />
                   )}
+                  {activeTab === 'ai_hub' && (
+                    <AIAdvisorySuite activeVenue={activeVenue} activePersona={activePersona} />
+                  )}
                 </motion.div>
               );
             })()}
@@ -541,6 +580,31 @@ export default function App() {
 
       {/* Adaptive Global AI Assistant Co-Pilot Panel */}
       <AIAssistant activePersonaId={activePersona.id} />
+
+      {/* Voice Assistant Navigation Toggle and Co-Pilot Panel */}
+      <VoiceAssistant
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        activePersona={activePersona}
+        onChangePersona={(p) => {
+          setActivePersona(p);
+          if (preferences.screenReaderEnabled) {
+            speak(`Switched persona to ${p.name}, role title ${p.roleName}`);
+          }
+          const access = checkAccess(activeTab);
+          if (!access.allowed) {
+            setActiveTab('fan');
+            if (preferences.screenReaderEnabled) {
+              speak(`Access level restricted. Redirecting to attendee hub.`);
+            }
+          }
+        }}
+        onLogout={() => {
+          setIsAuthenticated(false);
+          setActivePersona(ALL_PERSONAS[ALL_PERSONAS.length - 1]);
+          setActiveTab('fan');
+        }}
+      />
     </div>
   );
 }
