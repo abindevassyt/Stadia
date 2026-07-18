@@ -43,6 +43,66 @@ export default function App() {
       status: 'open',
       createdAt: new Date(Date.now() - 7200000).toISOString(),
       reportedBy: 'Turnstile Diagnostic Agent'
+    },
+    {
+      id: 'WO-5041',
+      title: 'Restroom Spill & Overflow Mitigation',
+      description: 'Graywater overflow sensor is reporting high capacity. Requires dry-vac cleanup and isolation.',
+      location: 'South Restrooms A1',
+      assetId: 's-plumb-2',
+      priority: 'critical',
+      assignedToRole: 'Environmental Cleanliness Tech (ECT)',
+      status: 'open',
+      createdAt: new Date(Date.now() - 1800000).toISOString(),
+      reportedBy: 'Environmental Sensor Agent'
+    },
+    {
+      id: 'WO-7721',
+      title: 'Emergency Egress Corridor Clearance',
+      description: 'Temporary signage blocking the main egress vector in stands row block 10.',
+      location: 'Stands Row 1-40',
+      assetId: 'n2',
+      priority: 'high',
+      assignedToRole: 'Crowd Safety Steward (CSS)',
+      status: 'open',
+      createdAt: new Date(Date.now() - 2400000).toISOString(),
+      reportedBy: 'Sarah Jenkins (ED)'
+    },
+    {
+      id: 'WO-9912',
+      title: 'Substation Amperage Unbalance Check',
+      description: 'Plaza Lighting Grid sub-station registers unbalanced Phase 3 current. Check local breakers.',
+      location: 'Bud Light Plaza',
+      assetId: 's-sub-3',
+      priority: 'critical',
+      assignedToRole: 'Low-Voltage & AV Systems Engineer (LVA)',
+      status: 'in-progress',
+      createdAt: new Date(Date.now() - 900000).toISOString(),
+      reportedBy: 'SCADA Telemetry Agent'
+    },
+    {
+      id: 'WO-4481',
+      title: 'VIP Lounge Lounge Temperature Audit',
+      description: 'Perform standard temperature audit on Chiller Flow Vent in Club Wembley Lounge.',
+      location: 'Club Wembley Lounge',
+      assetId: 's-hvac-1',
+      priority: 'low',
+      assignedToRole: 'MEP Technician (MEP)',
+      status: 'resolved',
+      createdAt: new Date(Date.now() - 14400000).toISOString(),
+      reportedBy: 'Elena Rostova (FOM)'
+    },
+    {
+      id: 'WO-2289',
+      title: 'Ticket Reader Calibration Verification',
+      description: 'Verify optical scanner response times and synchronize offline hashes database cache.',
+      location: 'Gate A Entry',
+      assetId: 's-sub-1',
+      priority: 'medium',
+      assignedToRole: 'Gate Access Ticket Controller (GATC)',
+      status: 'open',
+      createdAt: new Date(Date.now() - 5400000).toISOString(),
+      reportedBy: 'Lancelot Smith (GATC)'
     }
   ]);
 
