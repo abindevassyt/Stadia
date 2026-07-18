@@ -13,6 +13,7 @@ import AIAdvisorySuite from './components/AIAdvisorySuite';
 import GoogleFormsHub from './components/GoogleFormsHub';
 import ARNavigationModule from './components/ARNavigationModule';
 import VoiceAssistant from './components/VoiceAssistant';
+import ValidationHub from './components/ValidationHub';
 import { PRESET_VENUES, ALL_PERSONAS } from './data/venues';
 import { VenueConfig, Persona, WorkOrder, DigitalTwinNode, CMMSSensor, UserPreferences, AlertServiceLog } from './types';
 import { 
@@ -32,7 +33,8 @@ import {
   Compass,
   ClipboardList,
   Activity,
-  Briefcase
+  Briefcase,
+  FileCheck
 } from 'lucide-react';
 import { useRoleNavigation } from './hooks/useRoleNavigation';
 import { usePreferences } from './context/PreferencesContext';
@@ -170,7 +172,7 @@ export default function App() {
     }
   ]);
 
-  const [activeTab, setActiveTab] = useState<'vcp' | 'fan' | 'staff' | 'forms_hub' | 'ar_nav' | 'cmms' | 'executive' | 'settings' | 'ai_hub'>('ai_hub');
+  const [activeTab, setActiveTab] = useState<'vcp' | 'fan' | 'staff' | 'forms_hub' | 'ar_nav' | 'cmms' | 'executive' | 'settings' | 'ai_hub' | 'validation_hub'>('ai_hub');
 
   const { preferences, updatePreferences, toggleTheme } = usePreferences();
 
@@ -282,8 +284,8 @@ export default function App() {
   };
 
   // Zero-Trust Access Rules validation
-  const checkAccess = (tab: 'vcp' | 'fan' | 'staff' | 'forms_hub' | 'ar_nav' | 'cmms' | 'executive' | 'settings' | 'ai_hub'): { allowed: boolean; reason?: string } => {
-    if (tab === 'vcp' || tab === 'fan' || tab === 'settings' || tab === 'ai_hub' || tab === 'forms_hub' || tab === 'ar_nav') return { allowed: true };
+  const checkAccess = (tab: 'vcp' | 'fan' | 'staff' | 'forms_hub' | 'ar_nav' | 'cmms' | 'executive' | 'settings' | 'ai_hub' | 'validation_hub'): { allowed: boolean; reason?: string } => {
+    if (tab === 'vcp' || tab === 'fan' || tab === 'settings' || tab === 'ai_hub' || tab === 'forms_hub' || tab === 'ar_nav' || tab === 'validation_hub') return { allowed: true };
     
     if (tab === 'staff') {
       // Must have staff level clearance or higher
@@ -351,7 +353,8 @@ export default function App() {
     forms_hub: <ClipboardList className="h-4 w-4 shrink-0" />,
     cmms: <Activity className="h-4 w-4 shrink-0" />,
     executive: <Briefcase className="h-4 w-4 shrink-0" />,
-    settings: <Settings className="h-4 w-4 shrink-0" />
+    settings: <Settings className="h-4 w-4 shrink-0" />,
+    validation_hub: <FileCheck className="h-4 w-4 shrink-0" />
   };
 
   return (
@@ -456,7 +459,8 @@ export default function App() {
                     { id: 'forms_hub', label: t('nav.forms_hub') },
                     { id: 'cmms', label: t('nav.cmms') },
                     { id: 'executive', label: t('nav.executive') },
-                    { id: 'settings', label: t('nav.settings') }
+                    { id: 'settings', label: t('nav.settings') },
+                    { id: 'validation_hub', label: t('nav.validation_hub') }
                   ].map(tab => {
                     const isSelected = activeTab === tab.id;
                     const access = checkAccess(tab.id as any);
@@ -585,7 +589,8 @@ export default function App() {
             { id: 'forms_hub', label: t('nav.forms_hub') },
             { id: 'cmms', label: t('nav.cmms') },
             { id: 'executive', label: t('nav.executive') },
-            { id: 'settings', label: t('nav.settings') }
+            { id: 'settings', label: t('nav.settings') },
+            { id: 'validation_hub', label: t('nav.validation_hub') }
           ].map(tab => (
             <button
               key={tab.id}
@@ -722,6 +727,57 @@ export default function App() {
                   )}
                   {activeTab === 'ai_hub' && (
                     <AIAdvisorySuite activeVenue={activeVenue} activePersona={activePersona} />
+                  )}
+                  {activeTab === 'validation_hub' && (
+                    <ValidationHub
+                      activeVenue={activeVenue}
+                      activePersona={activePersona}
+                      onChangeTab={(tab) => setActiveTab(tab)}
+                      onSimulateAlarm={() => {
+                        // Play sound or mock SCADA status warning
+                        if (preferences.alertSounds) {
+                          try {
+                            const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+                            const osc = audioCtx.createOscillator();
+                            const gainNode = audioCtx.createGain();
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+                            osc.frequency.exponentialRampToValueAtTime(440, audioCtx.currentTime + 0.3);
+                            gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                            osc.connect(gainNode);
+                            gainNode.connect(audioCtx.destination);
+                            osc.start();
+                            osc.stop(audioCtx.currentTime + 0.4);
+                          } catch (e) {
+                            console.error('Audio synthesis failed', e);
+                          }
+                        }
+                        
+                        // Also trigger water leak sensor simulation dynamically on active venue
+                        const leakSensor = activeVenue.cmmsSensors?.find(s => s.type === 'water_pressure');
+                        if (leakSensor) {
+                          const updatedSensors = activeVenue.cmmsSensors.map(s => 
+                            s.id === leakSensor.id 
+                              ? { ...s, currentReading: 1.2, status: 'anomaly' as const, lastUpdated: new Date().toISOString() } 
+                              : s
+                          );
+                          handleUpdateSensors(updatedSensors);
+                        } else {
+                          // Trigger general water leak
+                          alert('SCADA: Simulating Critical Water Main Leak on active arena network!');
+                        }
+                      }}
+                      onSimulateDensityBreach={() => {
+                        // Trigger crowd bottleneck breach (TC-04)
+                        handleForecastRun(
+                          88, 
+                          ['Gate A entry turnstiles', 'South Concourse Corridor A1'], 
+                          'Route fans through Gate B (VIP) and Ramp South-East immediately.', 
+                          'Predictive simulation confirms critical overflow'
+                        );
+                      }}
+                    />
                   )}
                 </motion.div>
               );

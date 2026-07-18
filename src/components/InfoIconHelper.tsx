@@ -57,7 +57,7 @@ export default function InfoIconHelper({ content, title, position = 'bottom' }: 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: position === 'top' ? 4 : -4 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`absolute ${positionClasses[position]} w-64 p-3 bg-slate-905 border border-slate-800 text-slate-300 text-xs rounded-xl shadow-2xl z-50 pointer-events-none backdrop-blur-md`}
+            className={`absolute ${positionClasses[position]} w-64 p-3 bg-slate-950 border border-slate-800 text-slate-300 text-xs rounded-xl shadow-2xl z-50 pointer-events-none backdrop-blur-md`}
           >
             {title && (
               <div className="font-bold text-white mb-1 border-b border-slate-800 pb-1 font-sans flex items-center justify-between">

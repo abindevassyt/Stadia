@@ -22,6 +22,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     'nav.cmms': 'Equipment & Sensor Health',
     'nav.executive': 'Executive Dashboard',
     'nav.settings': 'Settings',
+    'nav.validation_hub': 'Diagnostics & Test Center',
     'nav.welcome': 'Welcome',
     'nav.logout': 'Logout',
 
@@ -114,6 +115,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     'nav.cmms': 'Geräte- & Sensorgesundheit',
     'nav.executive': 'Manager-Dashboard',
     'nav.settings': 'Einstellungen',
+    'nav.validation_hub': 'Validierungs- & Testcenter',
     'nav.welcome': 'Willkommen',
     'nav.logout': 'Abmelden',
 
@@ -371,6 +373,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     'nav.cmms': 'Salud de Equipos y Sensores',
     'nav.executive': 'Panel de Control del Gerente',
     'nav.settings': 'Configuración',
+    'nav.validation_hub': 'Centro de Pruebas y Diagnóstico',
     'nav.welcome': 'Bienvenido',
     'nav.logout': 'Cerrar sesión',
 
@@ -628,6 +631,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     'nav.cmms': 'Santé des Équipements et Capteurs',
     'nav.executive': 'Tableau de Bord du Manager',
     'nav.settings': 'Paramètres',
+    'nav.validation_hub': 'Centre de Tests & Diagnostics',
     'nav.welcome': 'Bienvenue',
     'nav.logout': 'Déconnexion',
 
