@@ -1,6 +1,6 @@
 {
   "name": "Stadia",
   "description": "Enterprise-grade stadium operating system and real-time IoT orchestration engine.",
-  "requestFramePermissions": ["geolocation", "camera"],
+  "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
