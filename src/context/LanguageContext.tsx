@@ -202,7 +202,163 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     'wembley_dietary pre-ordering issues': 'Wenn die POS-Synchronisationsgeschwindigkeit unter 95 % fällt, müssen die Pop-up-Koordinatoren digitale Offline-Wallet-Tokens akzeptieren. Der Bestandsprüfer (ILC) muss den Bestand manuell auf dem Sektoren-Klemmbrett protokollieren.',
     'allianz_emergency evacuation': 'Alle Rolltreppen und Kaskadentreppen-Richtringmotoren auf Abwärts-Fluchtweg schalten. Evakuierung durch die Außenmembran-Schnelltore einleiten.',
     'allianz_membrane panel pressure alert': 'Bei starkem Wind oder extremen thermischen Bedingungen müssen MEP-Techniker die Membrandruckkammern überwachen. Automatische Entlüftungsdichtungen aktivieren sich; schlägt die manuelle Übersteuerung fehl, leiten Sie den Strom zum Hilfskompressor 2 um.',
-    'metlife_severe weather evacuation': 'Bei Blitzerkennung im Umkreis von 8 Meilen muss die Einsatzleitung der Veranstalter (POL) eine Warnung über die Haupt-PA-Anlage veranlassen. Alle Tribünenzuschauer in die vollständig geschlossenen Innenbereiche leiten. Sicherheitsbereich in der Nähe der Drehkreuze aufrechterhalten.'
+    'metlife_severe weather evacuation': 'Bei Blitzerkennung im Umkreis von 8 Meilen muss die Einsatzleitung der Veranstalter (POL) eine Warnung über die Haupt-PA-Anlage veranlassen. Alle Tribünenzuschauer in die vollständig geschlossenen Innenbereiche leiten. Sicherheitsbereich in der Nähe der Drehkreuze aufrechterhalten.',
+
+    // --- Dynamic DOM Translation Additions ---
+    'Create Attendee Digital Wallet': 'Digitales Ticket-Wallet erstellen',
+    'Sign In to Your Digital Ticket': 'Mit digitalem Ticket anmelden',
+    'Attendee Access': 'Zuschauer-Zugang',
+    'Secure authentication portal': 'Sicheres Anmeldeportal',
+    'Register your cryptographic ticket details to activate in-seat pre-ordering.': 'Registrieren Sie Ihre Ticketdetails, um Vorbestellungen am Sitzplatz zu aktivieren.',
+    'Access your ticket stubs, geofenced concessions, and live venue maps.': 'Greifen Sie auf Ihre Ticketbelege, geofenced Verkaufsstände und Live-Pläne zu.',
+    'Security Handshake Policy': 'Sicherheits-Handshake-Richtlinie',
+    'Identity Isolation Policy': 'Richtlinie zur Identitätsisolierung',
+    'These external SSO providers are strictly locked to the Fan/Attendee role. Corporate and Operational clearance levels are restricted to direct PIN enclaves.': 'Diese externen SSO-Anbieter sind streng auf die Rolle Fan/Zuschauer beschränkt. Betriebliche Freigaben erfordern eine PIN-Eingabe.',
+    'Enterprise & Operational Command Portal': 'Unternehmens- & Betriebs-Kommando-Portal',
+    'Staff security PIN gateway': 'Sicherheits-PIN-Gateway für Mitarbeiter',
+    'Operational Access': 'Betrieblicher Zugang',
+    'Staff accounts are managed strictly within regional directories. Secure access is granted after checking the employee roster and verifying your encrypted passcode PIN.': 'Mitarbeiterkonten werden streng im Dienstplan verwaltet. Der Zugriff wird nach Überprüfung der PIN gewährt.',
+    'Roster Security Note': 'Hinweis zur Dienstplansicherheit',
+    'New ground volunteers must register in person at Command Center Gate B. The system prohibits public account self-provisioning on operational modules to prevent leakage.': 'Neue freiwillige Helfer müssen sich persönlich an Tor B registrieren. Eine Online-Registrierung ist nicht möglich.',
+    'Access PIN': 'Zugangs-PIN',
+    'Roster Profile': 'Dienstplan-Profil',
+    'Sign In': 'Anmelden',
+    'Enter your 4-digit security passcode PIN': 'Geben Sie Ihre 4-stellige Sicherheits-PIN ein',
+    'Authentication system': 'Authentifizierungssystem',
+    'Roster Security': 'Dienstplansicherheit',
+    'Security Handshake': 'Sicherheits-Handshake',
+    'PIN is required': 'PIN ist erforderlich',
+    'PIN must be 4 digits': 'PIN muss 4-stellig sein',
+    'Invalid PIN. Access Denied.': 'Ungültige PIN. Zugriff verweigert.',
+    'Access Granted!': 'Zugriff gewährt!',
+    'Authentication Failed. Check PIN.': 'Authentifizierung fehlgeschlagen. PIN prüfen.',
+    'Equipment & Sensor Health': 'Geräte- & Sensorgesundheit',
+    'Sensor anomaly detected!': 'Sensoranomalie erkannt!',
+    'Critical Water Main Leak!': 'Kritischer Wasserleitungsschaden!',
+    'Battery power critical!': 'Batterieleistung kritisch!',
+    'Sensor ID': 'Sensor-ID',
+    'Status': 'Status',
+    'Value': 'Wert',
+    'Operational': 'Betriebsbereit',
+    'Anomaly Detected': 'Anomalie erkannt',
+    'Register New Sensor': 'Neuen Sensor registrieren',
+    'Simulation Controls': 'Simulationssteuerungen',
+    'Trigger Leak Simulation': 'Lecksimulation auslösen',
+    'Mute Alarms': 'Alarme stummschalten',
+    'Active Alarms': 'Aktive Alarme',
+    'Tool Checkout System': 'Werkzeug-Ausleihsystem',
+    'Checkout Tool': 'Werkzeug ausleihen',
+    'Check-in Tool': 'Werkzeug zurückgeben',
+    'Assigned Engineer': 'Zugewiesener Techniker',
+    'Battery Level': 'Batterieladung',
+    'Water Pressure': 'Wasserdruck',
+    'CO2 Level': 'CO2-Gehalt',
+    'Ambient Temp': 'Umgebungstemp.',
+    'Gas Sub-sensor': 'Gassub-Sensor',
+    'Flow Rate': 'Durchflussrate',
+    'Trigger Anomaly': 'Anomalie auslösen',
+    'Resolve Anomaly': 'Anomalie beheben',
+    'Sensor Name': 'Sensorname',
+    'Sensor Type': 'Sensortyp',
+    'Threshold Limit': 'Schwellenwert',
+    'Save Sensor': 'Sensor speichern',
+    'Add New Sensor': 'Neuen Sensor hinzufügen',
+    'Executive Dashboard': 'Manager-Dashboard',
+    'Total Concession Revenue': 'Verkaufsumsatz Gesamt',
+    'Total Ticket Sales': 'Ticketverkäufe Gesamt',
+    'Active Security Cases': 'Aktive Sicherheitsfälle',
+    'Total Crowd Count': 'Besucherzahl Gesamt',
+    'Predictive Concession Revenue': 'Prognostizierter Verkaufsumsatz',
+    'Predictive Ticket Sales': 'Prognostizierte Ticketverkäufe',
+    'Deploy Mass Alert Notification': 'Massenwarnung senden',
+    'Security Logs': 'Sicherheitsprotokolle',
+    'Case ID': 'Fall-ID',
+    'Severity': 'Schweregrad',
+    'SLA Target': 'SLA-Ziel',
+    'Emergency Response Needed': 'Notfalleinsatz erforderlich',
+    'Broadcast Message': 'Rundfunknachricht',
+    'Send Broadcast': 'Senden',
+    'Warning: High crowd bottleneck at Sector C!': 'Warnung: Hoher Besucherengpass im Sektor C!',
+    'Fan & Guest Portal': 'Fan- & Gästeportal',
+    'Fan Dashboard': 'Fan-Dashboard',
+    'Concessions pre-ordering': 'Verkaufsstände-Vorbestellung',
+    'Geofence Check-in': 'Geofence-Check-in',
+    'Digital Ticket Stub': 'Digitaler Ticketbeleg',
+    'Interactive Stadium Map': 'Interaktive Stadionkarte',
+    'Crowd Density Map': 'Besucherdichtekarte',
+    'Active Ticket Code': 'Aktiver Ticketcode',
+    'Row': 'Reihe',
+    'Seat': 'Sitzplatz',
+    'Check In Automatically': 'Automatisch einchecken',
+    'Current Concourse Concessions': 'Verkaufsstände im Concourse',
+    'Express Lane Active': 'Express-Spur aktiv',
+    'Order Now': 'Jetzt bestellen',
+    'Confirm Purchase': 'Kauf bestätigen',
+    'Pre-order Concessions': 'Vorbestellen',
+    'Order submitted successfully!': 'Bestellung erfolgreich übermittelt!',
+    '3D Arena Guide': '3D-Arena-Wegweiser',
+    'Step-by-step directions': 'Schritt-für-Schritt-Anleitung',
+    'AR Compass': 'AR-Kompass',
+    'Virtual Path': 'Virtueller Pfad',
+    'Current Location': 'Aktueller Standort',
+    'Target Seat': 'Zielsitzplatz',
+    'Start Navigating': 'Navigation starten',
+    'Recalibrate GPS': 'GPS neukalibrieren',
+    'Spatial Lock Active': 'Räumliche Sperre aktiv',
+    'Remaining Distance': 'Verbleibende Entfernung',
+    'Estimated Arrival': 'Voraussichtliche Ankunft',
+    'Stop Navigation': 'Navigation stoppen',
+    'Calibrating Spatial Compass...': 'Räumlicher Kompass wird kalibriert...',
+    'Reports & Surveys': 'Berichte & Umfragen',
+    'Incident Report Form': 'Vorfallbericht-Formular',
+    'Fan Satisfaction Survey': 'Zufriedenheitsumfrage',
+    'Submit Incident': 'Vorfall melden',
+    'Report Spill': 'Verschüttung melden',
+    'Report Security issue': 'Sicherheitsproblem melden',
+    'Your feedback helps us make your visit better.': 'Ihr Feedback hilft uns, Ihren Besuch zu verbessern.',
+    'Submit Feedback': 'Feedback absenden',
+    'Feedback Submitted!': 'Feedback übermittelt!',
+    'Incident Registered!': 'Vorfall registriert!',
+    'Arena Setup & Ingestion': 'Arena-Setup & Ingestion',
+    'Arena Layout Ingestion': 'Arena-Layout einlesen',
+    'Physical Layout Simulator': 'Physischer Layout-Simulator',
+    'Digital Twin Node Ingestion': 'Digital Twin Node Ingestion',
+    'Simulate Arena Capacity': 'Arenakapazität simulieren',
+    'Sensor Feed Ingest': 'Sensor-Feed einlesen',
+    'Ingestion Log': 'Einleseprotokoll',
+    'Stadia Voice Assistant': 'Stadia Sprachassistent',
+    'Tap to Speak': 'Zum Sprechen tippen',
+    'Listening...': 'Hören...',
+    'Processing...': 'Verarbeiten...',
+    'Co-pilot standby': 'Co-pilot Standby',
+    'Voice Dispatch: ECT Field Work Order': 'Sprachdispatch: ECT-Arbeitsauftrag',
+    'AUTOPREP FOR ENVIRONMENTAL CLEANLINESS TECHNICIAN': 'AUTOMATISCHE VORBEREITUNG FÜR ECT',
+    'Work Order Title:': 'Arbeitsauftrag Titel:',
+    'Detailed Instructions:': 'Detaillierte Anweisungen:',
+    'Geofence Location:': 'Geofence-Standort:',
+    'Priority Level:': 'Prioritätsstufe:',
+    'Mapped Asset ID:': 'Zugeordnete Asset-ID:',
+    'Assigned Squad Role:': 'Zugewiesene Teamrolle:',
+    'Authorize & Push Work Order': 'Arbeitsauftrag autorisieren',
+    'Cancel': 'Abbrechen',
+    'Active Roster Profile:': 'Aktives Dienstplan-Profil:',
+    'Stadia OS Menu': 'Stadia OS Menü',
+    'Zero-Trust Mobile Access': 'Zero-Trust mobiler Zugriff',
+    'Change View': 'Ansicht ändern',
+    'Active view:': 'Aktive Ansicht:',
+    'Close menu': 'Menü schließen',
+    'Close': 'Schließen',
+    'Save': 'Speichern',
+    'Edit': 'Bearbeiten',
+    'Delete': 'Löschen',
+    'Clear': 'Löschen',
+    'Error': 'Fehler',
+    'Success': 'Erfolg',
+    'Alert': 'Alarm',
+    'Warning': 'Warnung',
+    'Unknown': 'Unbekannt',
+    'Access Denied': 'Zugriff verweigert',
+    'Clearance Level Insufficient': 'Sicherheitsstufe unzureichend',
   },
   es: {
     // Navbar / Common Tabs
@@ -266,7 +422,7 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     'ai.sustainability': 'Monitor de Energía Ecológica',
     'ai.sustainability_desc': 'Realice un seguimiento del ahorro de energía del estadio y de las métricas ecológicas',
     'ai.multilingual': 'Traductor de Idiomas Universal',
-    'ai.multilingual_desc': 'Traduzca cualquier mensaje o protocolo de seguridad a otros idiomas',
+    'ai.multilingual_desc': 'Traduzca cualquier message o protocolo de seguridad a otros idiomas',
     'ai.ops_brief': 'Resumen Diario del Evento',
     'ai.ops_brief_desc': 'Notas clave del estadio y actualizaciones rápidas para la gerencia',
 
@@ -298,12 +454,168 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
 
     // Localized Venue Playbooks
     'wembley_emergency evacuation': 'En caso de alarma activa, detener el ingreso por torniquetes. Abrir las puertas secundarias de emergencia A1-A4 instantáneamente. Dirigir a los Líderes Voluntarios de Sector (SVL) para guiar a las multitudes utilizando pasillos de salida de alta visibilidad. Restringir el ascensor VIP únicamente para personal médico.',
-    'wembley_plumbing spill protocol': 'Cuando el sensor ambiental o de plomería registre un desbordamiento superior al 85% de su capacidad, enviar Técnicos de Limpieza Ambiental (ECT) equipados con unidades de aspiración en seco para riesgos. Geocercar las válvulas de los baños e aislar el bloque en un plazo de 90 segundos. Notificar a los líderes voluntarios del sector para redirigir a los aficionados a los bloques de baños del Concourse Norte.',
+    'wembley_plumbing spill protocol': 'Cuando el sensor ambiental o de plomería registre un desbordamiento superior al 85% de su capacidad, enviar Técnicos de Limpieza Ambiental (ECT) equipados con unidades de aspiración en seco para riesgos. Geocercar las válvulas de los baños e aislar el block en un plazo de 90 segundos. Notificar a los líderes voluntarios del sector para redirigir a los aficionados a los bloques de baños del Concourse Norte.',
     'wembley_turnstile power interruption': 'En caso de fallo en la red de torniquetes, los Controladores de Boletos de Acceso a Puertas (GATC) deben cambiar al modo de caché localizada. Un protocolo de enlace BLE sin conexión autorizará los hashes de boletos de forma desconectada. Los Ingenieros de Sistemas de Bajo Voltaje y AV deben desplegarse en la subestación de la Puerta A para reiniciar el controlador del conmutador perimetral.',
     'wembley_dietary pre-ordering issues': 'Si la velocidad de sincronización de POS cae por debajo del 95%, los coordinadores de tiendas emergentes deben aceptar tokens de billetera digital sin conexión. El empleado de inventario (ILC) debe registrar el inventario manualmente en la tabla portapapeles del sector.',
     'allianz_emergency evacuation': 'Detener todas las escaleras mecánicas y motores de las escaleras de cascada en sentido descendente. Evacuar a través de las puertas rápidas del panel de la membrana exterior.',
     'allianz_membrane panel pressure alert': 'En condiciones extremas de viento o térmicas, los técnicos de MEP deben supervisar las cámaras de presurización de la membrana. Los sellos de ventilación automática funcionarán; si el bypass manual falla, desviar la energía al Compresor Auxiliar 2.',
-    'metlife_severe weather evacuation': 'En caso de detección de rayos dentro de un radio de 8 millas, el Enlace de Operaciones del Promotor (POL) debe ordenar una advertencia en el sistema de megafonía principal. Dirigir a todos los espectadores de las gradas hacia pasillos interiores completamente cerrados. Mantener el perímetro de seguridad cerca de los torniquetes.'
+    'metlife_severe weather evacuation': 'En caso de detección de rayos dentro de un radio de 8 millas, el Enlace de Operaciones del Promotor (POL) debe ordenar una advertencia en el sistema de megafonía principal. Dirigir a todos los espectadores de las gradas hacia pasillos interiores completamente cerrados. Mantener el perímetro de seguridad cerca de los torniquetes.',
+
+    // --- Dynamic DOM Translation Additions ---
+    'Create Attendee Digital Wallet': 'Crear billetera digital de asistente',
+    'Sign In to Your Digital Ticket': 'Iniciar sesión en su boleto digital',
+    'Attendee Access': 'Acceso de asistente',
+    'Secure authentication portal': 'Portal de autenticación seguro',
+    'Register your cryptographic ticket details to activate in-seat pre-ordering.': 'Registre los detalles criptográficos de su boleto para activar pedidos en el asiento.',
+    'Access your ticket stubs, geofenced concessions, and live venue maps.': 'Acceda a sus talones de boletos, puestos geovallados y mapas en vivo.',
+    'Security Handshake Policy': 'Política de saludo de seguridad',
+    'Identity Isolation Policy': 'Política de aislamiento de identidad',
+    'These external SSO providers are strictly locked to the Fan/Attendee role. Corporate and Operational clearance levels are restricted to direct PIN enclaves.': 'SSO externo restringido al rol de Asistente. Accesos corporativos requieren PIN directo.',
+    'Enterprise & Operational Command Portal': 'Portal de mando operativo y empresarial',
+    'Staff security PIN gateway': 'Pasarela PIN de seguridad del personal',
+    'Operational Access': 'Acceso operativo',
+    'Staff accounts are managed strictly within regional directories. Secure access is granted after checking the employee roster and verifying your encrypted passcode PIN.': 'Cuentas de personal gestionadas en directorios regionales. Acceso por PIN de la lista.',
+    'Roster Security Note': 'Nota de seguridad de la lista',
+    'New ground volunteers must register in person at Command Center Gate B. The system prohibits public account self-provisioning on operational modules to prevent leakage.': 'Nuevos voluntarios deben registrarse en persona en la Puerta B. Registro público deshabilitado.',
+    'Access PIN': 'PIN de acceso',
+    'Roster Profile': 'Perfil de lista',
+    'Sign In': 'Iniciar Sesión',
+    'Enter your 4-digit security passcode PIN': 'Ingrese su PIN de seguridad de 4 dígitos',
+    'Authentication system': 'Sistema de autenticación',
+    'Roster Security': 'Seguridad de la lista',
+    'Security Handshake': 'Apretón de manos de seguridad',
+    'PIN is required': 'PIN requerido',
+    'PIN must be 4 digits': 'El PIN debe tener 4 dígitos',
+    'Invalid PIN. Access Denied.': 'PIN inválido. Acceso denegado.',
+    'Access Granted!': '¡Acceso concedido!',
+    'Authentication Failed. Check PIN.': 'Autenticación fallida. Verifique el PIN.',
+    'Equipment & Sensor Health': 'Salud de equipos y sensores',
+    'Sensor anomaly detected!': '¡Anomalía del sensor detectada!',
+    'Critical Water Main Leak!': '¡Fuga de agua crítica en tubería principal!',
+    'Battery power critical!': '¡Energía de batería crítica!',
+    'Sensor ID': 'ID del sensor',
+    'Status': 'Estado',
+    'Value': 'Valor',
+    'Operational': 'Operativo',
+    'Anomaly Detected': 'Anomalía detectada',
+    'Register New Sensor': 'Registrar nuevo sensor',
+    'Simulation Controls': 'Controles de simulación',
+    'Trigger Leak Simulation': 'Simular fuga de agua',
+    'Mute Alarms': 'Silenciar alarmas',
+    'Active Alarms': 'Alarmas activas',
+    'Tool Checkout System': 'Préstamo de herramientas',
+    'Checkout Tool': 'Prestar herramienta',
+    'Check-in Tool': 'Devolver herramienta',
+    'Assigned Engineer': 'Ingeniero asignado',
+    'Battery Level': 'Nivel de batería',
+    'Water Pressure': 'Presión del agua',
+    'CO2 Level': 'Nivel de CO2',
+    'Ambient Temp': 'Temp. ambiente',
+    'Gas Sub-sensor': 'Subsensor de gas',
+    'Flow Rate': 'Tasa de flujo',
+    'Trigger Anomaly': 'Activar anomalía',
+    'Resolve Anomaly': 'Resolver anomalía',
+    'Sensor Name': 'Nombre del sensor',
+    'Sensor Type': 'Tipo de sensor',
+    'Threshold Limit': 'Límite de umbral',
+    'Save Sensor': 'Guardar sensor',
+    'Add New Sensor': 'Agregar nuevo sensor',
+    'Executive Dashboard': 'Panel de control del gerente',
+    'Total Concession Revenue': 'Ingresos de concesiones',
+    'Total Ticket Sales': 'Ventas de boletos',
+    'Active Security Cases': 'Casos de seguridad activos',
+    'Total Crowd Count': 'Recuento de público',
+    'Predictive Concession Revenue': 'Ingresos predictivos de puestos',
+    'Predictive Ticket Sales': 'Ventas predictivas de boletos',
+    'Deploy Mass Alert Notification': 'Enviar alerta masiva',
+    'Security Logs': 'Registros de seguridad',
+    'Case ID': 'ID del caso',
+    'Severity': 'Severidad',
+    'SLA Target': 'SLA objetivo',
+    'Emergency Response Needed': 'Respuesta de emergencia',
+    'Broadcast Message': 'Mensaje de transmisión',
+    'Send Broadcast': 'Enviar transmisión',
+    'Warning: High crowd bottleneck at Sector C!': '¡Advertencia: cuello de botella de público en Sector C!',
+    'Fan & Guest Portal': 'Portal de aficionados y mapa',
+    'Fan Dashboard': 'Panel de aficionados',
+    'Concessions pre-ordering': 'Pedidos de puestos',
+    'Geofence Check-in': 'Registro por geovalla',
+    'Digital Ticket Stub': 'Talón de boleto digital',
+    'Interactive Stadium Map': 'Mapa interactivo del estadio',
+    'Crowd Density Map': 'Mapa de densidad de público',
+    'Active Ticket Code': 'Código de boleto activo',
+    'Row': 'Fila',
+    'Seat': 'Asiento',
+    'Check In Automatically': 'Registrarse automáticamente',
+    'Current Concourse Concessions': 'Concesiones del vestíbulo',
+    'Express Lane Active': 'Carril express activo',
+    'Order Now': 'Ordenar ahora',
+    'Confirm Purchase': 'Confirmar compra',
+    'Pre-order Concessions': 'Pedir por adelantado',
+    'Order submitted successfully!': '¡Pedido enviado con éxito!',
+    '3D Arena Guide': 'Guía 3D de la arena',
+    'Step-by-step directions': 'Direcciones paso a paso',
+    'AR Compass': 'Brújula AR',
+    'Virtual Path': 'Ruta virtual',
+    'Current Location': 'Ubicación actual',
+    'Target Seat': 'Asiento de destino',
+    'Start Navigating': 'Iniciar navegación',
+    'Recalibrate GPS': 'Recalibrar GPS',
+    'Spatial Lock Active': 'Bloqueo espacial activo',
+    'Remaining Distance': 'Distancia restante',
+    'Estimated Arrival': 'Llegada estimada',
+    'Stop Navigation': 'Detener navegación',
+    'Calibrating Spatial Compass...': 'Calibrando brújula espacial...',
+    'Reports & Surveys': 'Informes y encuestas',
+    'Incident Report Form': 'Formulario de informe de incidentes',
+    'Fan Satisfaction Survey': 'Encuesta de satisfacción del fan',
+    'Submit Incident': 'Enviar incidente',
+    'Report Spill': 'Informar derrame',
+    'Report Security issue': 'Informar problema de seguridad',
+    'Your feedback helps us make your visit better.': 'Sus comentarios nos ayudan a mejorar su visita.',
+    'Submit Feedback': 'Enviar comentarios',
+    'Feedback Submitted!': '¡Comentarios enviados!',
+    'Incident Registered!': '¡Incidente registrado!',
+    'Arena Setup & Ingestion': 'Configuración de arena e ingesta',
+    'Arena Layout Ingestion': 'Ingesta del diseño de la arena',
+    'Physical Layout Simulator': 'Simulador de diseño físico',
+    'Digital Twin Node Ingestion': 'Ingesta de nodos del gemelo digital',
+    'Simulate Arena Capacity': 'Simular capacidad de la arena',
+    'Sensor Feed Ingest': 'Ingesta de alimentación de sensores',
+    'Ingestion Log': 'Registro de ingesta',
+    'Stadia Voice Assistant': 'Asistente de voz de Stadia',
+    'Tap to Speak': 'Toque para hablar',
+    'Listening...': 'Escuchando...',
+    'Processing...': 'Procesando...',
+    'Co-pilot standby': 'Copiloto en espera',
+    'Voice Dispatch: ECT Field Work Order': 'Despacho de voz: Orden de trabajo ECT',
+    'AUTOPREP FOR ENVIRONMENTAL CLEANLINESS TECHNICIAN': 'AUTOPREPARACIÓN PARA TÉCNICO DE LIMPIEZA ECT',
+    'Work Order Title:': 'Título de la orden de trabajo:',
+    'Detailed Instructions:': 'Instrucciones detalladas:',
+    'Geofence Location:': 'Ubicación de geovalla:',
+    'Priority Level:': 'Nivel de prioridad:',
+    'Mapped Asset ID:': 'ID de activo asignado:',
+    'Assigned Squad Role:': 'Rol de escuadrón asignado:',
+    'Authorize & Push Work Order': 'Autorizar orden de trabajo',
+    'Cancel': 'Cancelar',
+    'Active Roster Profile:': 'Perfil de lista activo:',
+    'Stadia OS Menu': 'Menú Stadia OS',
+    'Zero-Trust Mobile Access': 'Acceso móvil Zero-Trust',
+    'Change View': 'Cambiar vista',
+    'Active view:': 'Vista activa:',
+    'Close menu': 'Cerrar menú',
+    'Close': 'Cerrar',
+    'Save': 'Guardar',
+    'Edit': 'Editar',
+    'Delete': 'Eliminar',
+    'Clear': 'Borrar',
+    'Error': 'Error',
+    'Success': 'Éxito',
+    'Alert': 'Alerta',
+    'Warning': 'Advertencia',
+    'Unknown': 'Desconocido',
+    'Access Denied': 'Acceso denegado',
+    'Clearance Level Insufficient': 'Nivel de autorización insuficiente',
   },
   fr: {
     // Navbar / Common Tabs
@@ -404,7 +716,163 @@ export const TRANSLATIONS: Record<LanguageCode, Record<string, string>> = {
     'wembley_dietary pre-ordering issues': 'Si la vitesse de synchronisation du point de vente descend en dessous de 95 %, les coordinateurs de points de vente éphémères doivent accepter les jetons de portefeuille numérique hors ligne. Le commis d\'inventaire (ILC) doit consigner les stocks manuellement sur le presse-papiers du secteur.',
     'allianz_emergency evacuation': 'Arrêter tous les escalators et les moteurs des escaliers en cascade pour les orienter vers le bas. Évacuer par les portes rapides des panneaux de la membrane extérieure.',
     'allianz_membrane panel pressure alert': 'En cas de vent fort ou de conditions thermiques extrêmes, les techniciens MEP doivent surveiller les chambres de pressurisation de la membrane. Les joints d\'auto-ventilation fonctionneront ; si la dérivation manuelle échoue, acheminer l\'énergie vers le compresseur auxiliaire 2.',
-    'metlife_severe weather evacuation': 'En cas de détection de foudre dans un rayon de 8 miles, la liaison des opérations du promoteur (POL) doit ordonner un avertissement sur la sonorisation principale. Dirigir tous les spectateurs de la tribune vers les halls intérieurs entièrement fermés. Maintenir un périmètre de sécurité à proximité des tourniquets.'
+    'metlife_severe weather evacuation': 'En cas de détection de foudre dans un rayon de 8 miles, la liaison des opérations du promoteur (POL) doit ordonner un avertissement sur la sonorisation principale. Dirigir tous les spectateurs de la tribune vers les halls intérieurs entièrement fermés. Maintenir un périmètre de sécurité à proximité des tourniquets.',
+
+    // --- Dynamic DOM Translation Additions ---
+    'Create Attendee Digital Wallet': 'Créer un portefeuille numérique',
+    'Sign In to Your Digital Ticket': 'Connexion à votre billet digital',
+    'Attendee Access': 'Accès spectateur',
+    'Secure authentication portal': 'Portail d\'authentification sécurisé',
+    'Register your cryptographic ticket details to activate in-seat pre-ordering.': 'Enregistrez les détails de votre billet cryptographique pour commander à votre place.',
+    'Access your ticket stubs, geofenced concessions, and live venue maps.': 'Accédez à vos talons de billets, buvettes géolocalisées et plans du stade.',
+    'Security Handshake Policy': 'Politique de liaison de sécurité',
+    'Identity Isolation Policy': 'Politique d\'isolation d\'identité',
+    'These external SSO providers are strictly locked to the Fan/Attendee role. Corporate and Operational clearance levels are restricted to direct PIN enclaves.': 'SSO externe limité au rôle Supporter. Niveaux d\'accès administratifs sur PIN.',
+    'Enterprise & Operational Command Portal': 'Portail opérationnel et d\'entreprise',
+    'Staff security PIN gateway': 'Passerelle de sécurité PIN du personnel',
+    'Operational Access': 'Accès opérationnel',
+    'Staff accounts are managed strictly within regional directories. Secure access is granted after checking the employee roster and verifying your encrypted passcode PIN.': 'Comptes du personnel gérés dans des annuaires locaux. Accès accordé après vérification du PIN.',
+    'Roster Security Note': 'Note de sécurité sur l\'effectif',
+    'New ground volunteers must register in person at Command Center Gate B. The system prohibits public account self-provisioning on operational modules to prevent leakage.': 'Nouveaux bénévoles doivent s\'enregistrer en personne à la Porte B. Auto-inscription publique interdite.',
+    'Access PIN': 'Code PIN d\'accès',
+    'Roster Profile': 'Profil de l\'effectif',
+    'Sign In': 'Se Connecter',
+    'Enter your 4-digit security passcode PIN': 'Saisissez votre code PIN de sécurité à 4 chiffres',
+    'Authentication system': 'Système d\'authentification',
+    'Roster Security': 'Sécurité des effectifs',
+    'Security Handshake': 'Validation de sécurité',
+    'PIN is required': 'Le code PIN est requis',
+    'PIN must be 4 digits': 'Le code PIN doit comporter 4 chiffres',
+    'Invalid PIN. Access Denied.': 'Code PIN invalide. Accès refusé.',
+    'Access Granted!': 'Accès accordé !',
+    'Authentication Failed. Check PIN.': 'Échec de l\'authentification. Vérifiez le code PIN.',
+    'Equipment & Sensor Health': 'Santé des équipements et capteurs',
+    'Sensor anomaly detected!': 'Anomalie de capteur détectée !',
+    'Critical Water Main Leak!': 'Fuite d\'eau critique de la conduite principale !',
+    'Battery power critical!': 'Niveau de batterie critique !',
+    'Sensor ID': 'ID Capteur',
+    'Status': 'Statut',
+    'Value': 'Valeur',
+    'Operational': 'Opérationnel',
+    'Anomaly Detected': 'Anomalie détectée',
+    'Register New Sensor': 'Enregistrer un nouveau capteur',
+    'Simulation Controls': 'Contrôles de simulation',
+    'Trigger Leak Simulation': 'Simuler une fuite d\'eau',
+    'Mute Alarms': 'Couper les alarmes',
+    'Active Alarms': 'Alarmes actives',
+    'Tool Checkout System': 'Gestion du matériel emprunté',
+    'Checkout Tool': 'Emprunter un outil',
+    'Check-in Tool': 'Retourner un outil',
+    'Assigned Engineer': 'Ingénieur affecté',
+    'Battery Level': 'Niveau de batterie',
+    'Water Pressure': 'Pression de l\'eau',
+    'CO2 Level': 'Taux de CO2',
+    'Ambient Temp': 'Temp. ambiante',
+    'Gas Sub-sensor': 'Sous-capteur de gaz',
+    'Flow Rate': 'Débit',
+    'Trigger Anomaly': 'Déclencher l\'anomalie',
+    'Resolve Anomaly': 'Résoudre l\'anomalie',
+    'Sensor Name': 'Nom du capteur',
+    'Sensor Type': 'Type de capteur',
+    'Threshold Limit': 'Seuil limite',
+    'Save Sensor': 'Enregistrer le capteur',
+    'Add New Sensor': 'Ajouter un capteur',
+    'Executive Dashboard': 'Tableau de bord du manager',
+    'Total Concession Revenue': 'Revenus des buvettes',
+    'Total Ticket Sales': 'Ventes de billets',
+    'Active Security Cases': 'Alertes de sécurité actives',
+    'Total Crowd Count': 'Nombre total de supporters',
+    'Predictive Concession Revenue': 'Revenus prédictifs des buvettes',
+    'Predictive Ticket Sales': 'Ventes prédictives de billets',
+    'Deploy Mass Alert Notification': 'Diffuser une alerte générale',
+    'Security Logs': 'Rapports de sécurité',
+    'Case ID': 'ID d\'alerte',
+    'Severity': 'Gravité',
+    'SLA Target': 'SLA cible',
+    'Emergency Response Needed': 'Intervention d\'urgence',
+    'Broadcast Message': 'Message général',
+    'Send Broadcast': 'Envoyer l\'alerte',
+    'Warning: High crowd bottleneck at Sector C!': 'Attention : Embouteillage important de foule au Secteur C !',
+    'Fan & Guest Portal': 'Portail supporters et carte',
+    'Fan Dashboard': 'Tableau de bord supporter',
+    'Concessions pre-ordering': 'Commande de buvettes',
+    'Geofence Check-in': 'Enregistrement géolocalisé',
+    'Digital Ticket Stub': 'Billet d\'accès digital',
+    'Interactive Stadium Map': 'Plan interactif du stade',
+    'Crowd Density Map': 'Carte d\'affluence en temps réel',
+    'Active Ticket Code': 'Code d\'accès actif',
+    'Row': 'Rangée',
+    'Seat': 'Siège',
+    'Check In Automatically': 'Enregistrement automatique',
+    'Current Concourse Concessions': 'Buvettes disponibles',
+    'Express Lane Active': 'Accès coupe-file actif',
+    'Order Now': 'Commander maintenant',
+    'Confirm Purchase': 'Confirmer l\'achat',
+    'Pre-order Concessions': 'Pré-commander',
+    'Order submitted successfully!': 'Commande enregistrée avec succès !',
+    '3D Arena Guide': 'Guide 3D de l\'arène',
+    'Step-by-step directions': 'Itinéraire pas-à-pas',
+    'AR Compass': 'Boussole AR',
+    'Virtual Path': 'Chemin virtuel',
+    'Current Location': 'Position actuelle',
+    'Target Seat': 'Siège recherché',
+    'Start Navigating': 'Lancer l\'itinéraire',
+    'Recalibrate GPS': 'Recalibrer le GPS',
+    'Spatial Lock Active': 'Signal spatial verrouillé',
+    'Remaining Distance': 'Distance restante',
+    'Estimated Arrival': 'Heure d\'arrivée estimée',
+    'Stop Navigation': 'Arrêter la navigation',
+    'Calibrating Spatial Compass...': 'Calibrage de la boussole spatiale...',
+    'Reports & Surveys': 'Rapports et enquêtes',
+    'Incident Report Form': 'Signaler un incident',
+    'Fan Satisfaction Survey': 'Enquête de satisfaction',
+    'Submit Incident': 'Envoyer le rapport',
+    'Report Spill': 'Signaler un déversement',
+    'Report Security issue': 'Signaler un problème de sécurité',
+    'Your feedback helps us make your visit better.': 'Vos commentaires nous aident à améliorer votre visite.',
+    'Submit Feedback': 'Envoyer l\'avis',
+    'Feedback Submitted!': 'Avis enregistré !',
+    'Incident Registered!': 'Incident enregistré !',
+    'Arena Setup & Ingestion': 'Configuration de l\'arène et capteurs',
+    'Arena Layout Ingestion': 'Configuration de la disposition',
+    'Physical Layout Simulator': 'Simulateur de disposition physique',
+    'Digital Twin Node Ingestion': 'Configuration du jumeau numérique',
+    'Simulate Arena Capacity': 'Simuler l\'affluence',
+    'Sensor Feed Ingest': 'Flux de données des capteurs',
+    'Ingestion Log': 'Rapport de configuration',
+    'Stadia Voice Assistant': 'Assistant vocal Stadia',
+    'Tap to Speak': 'Appuyer pour parler',
+    'Listening...': 'Écoute en cours...',
+    'Processing...': 'Analyse en cours...',
+    'Co-pilot standby': 'Assistant en veille',
+    'Voice Dispatch: ECT Field Work Order': 'Rapport vocal : Fiche d\'intervention ECT',
+    'AUTOPREP FOR ENVIRONMENTAL CLEANLINESS TECHNICIAN': 'PRÉPARATION AUTOMATIQUE DE LA FICHE ECT',
+    'Work Order Title:': 'Titre de l\'intervention :',
+    'Detailed Instructions:': 'Détails des instructions :',
+    'Geofence Location:': 'Emplacement géolocalisé :',
+    'Priority Level:': 'Niveau de priorité :',
+    'Mapped Asset ID:': 'ID d\'équipement associé :',
+    'Assigned Squad Role:': 'Rôle affecté :',
+    'Authorize & Push Work Order': 'Valider & Envoyer la fiche',
+    'Cancel': 'Annuler',
+    'Active Roster Profile:': 'Profil actif de l\'effectif :',
+    'Stadia OS Menu': 'Menu Stadia OS',
+    'Zero-Trust Mobile Access': 'Accès mobile sécurisé Zero-Trust',
+    'Change View': 'Changer de vue',
+    'Active view:': 'Vue active :',
+    'Close menu': 'Fermer le menu',
+    'Close': 'Fermer',
+    'Save': 'Enregistrer',
+    'Edit': 'Modifier',
+    'Delete': 'Supprimer',
+    'Clear': 'Effacer',
+    'Error': 'Erreur',
+    'Success': 'Succès',
+    'Alert': 'Alerte',
+    'Warning': 'Attention',
+    'Unknown': 'Inconnu',
+    'Access Denied': 'Accès refusé',
+    'Clearance Level Insufficient': 'Niveau d\'autorisation insuffisant',
   }
 };
 
@@ -433,7 +901,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   const t = (key: string): string => {
-    return TRANSLATIONS[language]?.[key] || TRANSLATIONS['en']?.[key] || key;
+    const trimmed = key.trim();
+    return TRANSLATIONS[language]?.[trimmed] || 
+           TRANSLATIONS[language]?.[key] || 
+           TRANSLATIONS['en']?.[trimmed] || 
+           TRANSLATIONS['en']?.[key] || 
+           key;
   };
 
   const localizeProtocols = (venueId: string, protocols: Array<{ topic: string; category: string; protocol: string }>) => {
@@ -452,9 +925,112 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  // Dynamic DOM Traversal Translation Logic
+  useEffect(() => {
+    if (language === 'en') return;
+
+    const translateNode = (node: Node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.nodeValue;
+        if (text) {
+          const trimmed = text.trim();
+          if (trimmed.length > 0) {
+            // Priority 1: Exact Match in current language translations
+            let translated = TRANSLATIONS[language]?.[trimmed] || TRANSLATIONS[language]?.[trimmed.toLowerCase()];
+            
+            // Priority 2: Case-insensitive search on keys
+            if (!translated) {
+              const lowerTrimmed = trimmed.toLowerCase();
+              const keys = Object.keys(TRANSLATIONS[language] || {});
+              const matchingKey = keys.find(k => k.toLowerCase() === lowerTrimmed);
+              if (matchingKey) {
+                translated = TRANSLATIONS[language][matchingKey];
+              }
+            }
+
+            if (translated) {
+              node.nodeValue = text.replace(trimmed, translated);
+            }
+          }
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const element = node as Element;
+        const tagName = element.tagName.toLowerCase();
+        
+        // Skip code components, scripts, styles, textareas and iframe to avoid breaking them
+        if (tagName === 'script' || tagName === 'style' || tagName === 'iframe' || tagName === 'textarea' || tagName === 'code') {
+          return;
+        }
+
+        // Translate inputs or textareas placeholders
+        if (element.hasAttribute('placeholder')) {
+          const placeholder = element.getAttribute('placeholder');
+          if (placeholder) {
+            const trimmed = placeholder.trim();
+            const translated = TRANSLATIONS[language]?.[trimmed] || TRANSLATIONS[language]?.[trimmed.toLowerCase()];
+            if (translated) {
+              element.setAttribute('placeholder', placeholder.replace(trimmed, translated));
+            }
+          }
+        }
+
+        // Translate hover title tooltips
+        if (element.hasAttribute('title')) {
+          const title = element.getAttribute('title');
+          if (title) {
+            const trimmed = title.trim();
+            const translated = TRANSLATIONS[language]?.[trimmed] || TRANSLATIONS[language]?.[trimmed.toLowerCase()];
+            if (translated) {
+              element.setAttribute('title', title.replace(trimmed, translated));
+            }
+          }
+        }
+
+        // Deep traverse child nodes
+        element.childNodes.forEach(child => translateNode(child));
+      }
+    };
+
+    // First deep scan of the active DOM
+    translateNode(document.body);
+
+    // Watch for dynamic DOM changes (sensor alert injects, error messages, form results)
+    const observer = new MutationObserver((mutations) => {
+      observer.disconnect();
+      
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            translateNode(node);
+          });
+        } else if (mutation.type === 'characterData') {
+          translateNode(mutation.target);
+        }
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [language]);
+
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t, localizeProtocols }}>
-      {children}
+      <div key={language} style={{ display: 'contents' }} id="stadia-os-localizer-root">
+        {children}
+      </div>
     </LanguageContext.Provider>
   );
 }

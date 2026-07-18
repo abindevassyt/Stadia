@@ -12,7 +12,9 @@ import {
   Lock,
   Sun,
   Moon,
-  Settings
+  Settings,
+  Menu,
+  X
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -23,6 +25,8 @@ interface NavbarProps {
   currentTheme: 'dark' | 'light';
   onToggleTheme: () => void;
   onGoToSettings: () => void;
+  onToggleMobileMenu?: () => void;
+  mobileMenuOpen?: boolean;
 }
 
 export default function Navbar({ 
@@ -32,7 +36,9 @@ export default function Navbar({
   onLogout,
   currentTheme,
   onToggleTheme,
-  onGoToSettings
+  onGoToSettings,
+  onToggleMobileMenu,
+  mobileMenuOpen = false
 }: NavbarProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -50,6 +56,22 @@ export default function Navbar({
         {/* Logo and Venue Name */}
         <div className="flex items-center gap-3 justify-between md:justify-start">
           <div className="flex items-center gap-3">
+            {/* High-contrast Hamburger menu button for mobile navigation */}
+            {onToggleMobileMenu && (
+              <button
+                onClick={onToggleMobileMenu}
+                className="md:hidden bg-slate-900 border-2 border-emerald-500 hover:border-emerald-400 text-emerald-400 p-2 rounded-xl transition-all shadow-[0_0_12px_rgba(16,185,129,0.2)] focus:outline-none flex items-center justify-center shrink-0 cursor-pointer"
+                aria-label={mobileMenuOpen ? "Close side menu" : "Open side menu"}
+                id="mobile-drawer-hamburger-btn"
+              >
+                {mobileMenuOpen ? (
+                  <X className="h-5 w-5 text-emerald-400 stroke-[2.5]" />
+                ) : (
+                  <Menu className="h-5 w-5 text-emerald-400 stroke-[2.5]" />
+                )}
+              </button>
+            )}
+
             <div className="bg-emerald-500 text-white p-2 rounded-xl shadow-[0_0_12px_rgba(16,185,129,0.3)] shrink-0">
               <Cpu className="h-5 w-5 animate-pulse" />
             </div>

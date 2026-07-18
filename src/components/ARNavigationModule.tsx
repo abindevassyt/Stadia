@@ -28,6 +28,7 @@ import {
   Mic
 } from 'lucide-react';
 import { hapticAudioService } from '../services/hapticAudioService';
+import InfoIconHelper from './InfoIconHelper';
 
 interface ARNavigationModuleProps {
   activeVenue: VenueConfig;
@@ -734,9 +735,13 @@ export default function ARNavigationModule({ activeVenue }: ARNavigationModulePr
               </span>
             </div>
 
-            <p className="text-xs text-slate-400 mb-5">
-              Select key landmarks inside the stadium. The AR/VPS pipeline compiles physical feature coordinates to guide you.
-            </p>
+            <div className="text-xs text-slate-400 mb-5 flex items-center">
+              Select key stadium landmarks to route.
+              <InfoIconHelper 
+                title="Route Planning Engine" 
+                content="Select your starting and ending waypoints. The engine calculates coordinates across physical walking nodes, estimating transit time and guiding your AR camera perspective." 
+              />
+            </div>
 
             <div className="space-y-4">
               
@@ -911,9 +916,13 @@ export default function ARNavigationModule({ activeVenue }: ARNavigationModulePr
             </span>
           </div>
 
-          <p className="text-xs text-slate-400">
-            Enables high-accessibility acoustic and tactile indicators specifically tuned to assist visually impaired individuals during stadium wayfinding.
-          </p>
+          <div className="text-xs text-slate-400 flex items-center">
+            Acoustic & tactile navigation helpers.
+            <InfoIconHelper 
+              title="Accessible Nav Aids" 
+              content="Enables spoken voice guidance, stereo panned acoustic chime indicators, and precise hardware vibration pulses to support visually impaired guests." 
+            />
+          </div>
 
           {/* Toggle buttons */}
           <div className="space-y-3">

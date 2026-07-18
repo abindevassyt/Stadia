@@ -3,6 +3,7 @@ import { UserPreferences } from '../types';
 import { usePreferences } from '../context/PreferencesContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useScreenReader } from '../hooks/useScreenReader';
+import InfoIconHelper from './InfoIconHelper';
 import { 
   Sun, 
   Moon, 
@@ -236,9 +237,13 @@ export default function SettingsInterface() {
             <span className="text-[9px] font-mono text-slate-500">Persists in Storage</span>
           </div>
 
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Toggle between the default low-light twilight canvas and a bright, high-contrast workspace theme for outdoor visibility.
-          </p>
+          <div className="text-xs text-slate-400 flex items-center">
+            Adjust workspace visual theme.
+            <InfoIconHelper 
+              title="Theme Selection" 
+              content="Toggle between the default low-light dark twilight canvas and a bright, high-contrast workspace light theme for comfortable outdoor visibility." 
+            />
+          </div>
 
           <div className="flex items-center gap-3 pt-2">
             <button
@@ -282,9 +287,13 @@ export default function SettingsInterface() {
             <span className="text-[9px] font-mono text-slate-500">Global i18n</span>
           </div>
 
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Select the primary language layer. All operational metrics, system headings, and retrieved playbook protocols dynamically update.
-          </p>
+          <div className="text-xs text-slate-400 flex items-center">
+            Adjust the primary language layer.
+            <InfoIconHelper 
+              title="Language Layer (i18n)" 
+              content="Sets the primary language of the application. All operational metrics, system headings, and playbook protocols dynamically translate." 
+            />
+          </div>
 
           <div className="pt-1">
             <label className="text-[10px] text-slate-500 font-mono block mb-1.5 uppercase font-semibold">
@@ -338,9 +347,13 @@ export default function SettingsInterface() {
             <span className="text-[9px] font-mono text-slate-500">User Spec</span>
           </div>
 
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Control telemetry threshold sound cues. Enable audio alerts to emit a crisp diagnostic alert sound when critical SCADA anomalies trigger.
-          </p>
+          <div className="text-xs text-slate-400 flex items-center">
+            Mute or unmute critical audio warnings.
+            <InfoIconHelper 
+              title="Audio Alarms" 
+              content="Controls telemetry threshold chime sound cues. Enabling this emits crisp audio alarms when critical SCADA or crowd-density bottlenecks are forecasted." 
+            />
+          </div>
 
           <div className="flex pt-2">
             <button
@@ -378,9 +391,13 @@ export default function SettingsInterface() {
             <span className="text-[9px] font-mono text-slate-500">SCADA Config</span>
           </div>
 
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Modify the execution clock rate for the physical sensor mock simulator. Faster intervals draw fresh graphs but consume slightly higher processor slices.
-          </p>
+          <div className="text-xs text-slate-400 flex items-center">
+            BMS simulation update clock.
+            <InfoIconHelper 
+              title="Telemetry Sync Rate" 
+              content="Modifies the refresh cycle rate of the physical sensor simulator. Faster intervals draw fresh graphs but consume slightly higher browser rendering power." 
+            />
+          </div>
 
           <div className="pt-1">
             <label className="text-[10px] text-slate-500 font-mono block mb-1.5 uppercase font-semibold">Refresh Frequency</label>
@@ -408,9 +425,13 @@ export default function SettingsInterface() {
             <span className="text-[9px] font-mono text-slate-500">Workspace Scale</span>
           </div>
 
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Adjust global UI density scaling. "Large" scaling is optimized for volunteers running tablet checks or workers in low-visibility sectors.
-          </p>
+          <div className="text-xs text-slate-400 flex items-center">
+            Adjust interface font scaling.
+            <InfoIconHelper 
+              title="A11y Grid Scaling" 
+              content="Scales the global typography. Enlarged text is optimized for ground stewards running hand-held tablet logs or operating in glare-heavy zones." 
+            />
+          </div>
 
           <div className="flex items-center gap-3 pt-2">
             <button
@@ -452,9 +473,13 @@ export default function SettingsInterface() {
             <span className="text-[9px] font-mono text-slate-500">A11y Text-To-Speech</span>
           </div>
 
-          <p className="text-xs text-slate-400 leading-relaxed">
-            {t('settings.screen_reader_desc')}
-          </p>
+          <div className="text-xs text-slate-400 flex items-center">
+            Configure screen reader behavior.
+            <InfoIconHelper 
+              title="Text-To-Speech Assist" 
+              content="Enables direct audio feedback on hover or selection of elements, ideal for stewards who need spoken wayfinding updates." 
+            />
+          </div>
 
           <div className="flex pt-2">
             <button
@@ -491,9 +516,13 @@ export default function SettingsInterface() {
             <span className="text-[9px] font-mono text-slate-500">Security Range</span>
           </div>
 
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Configure how strictly ground volunteers must match coordinates before sector logging. "Strict" requires active Bluetooth RSSI alignment.
-          </p>
+          <div className="text-xs text-slate-400 flex items-center">
+            Configure stewards GPS check-in strictness.
+            <InfoIconHelper 
+              title="Geofencing Range" 
+              content="Determines coordinate matching strictness. Strict requires active Bluetooth RSSI signal pairing within fifty meters before logging permissions activate." 
+            />
+          </div>
 
           <div className="flex items-center gap-2 pt-2">
             {(['off', 'wide', 'strict'] as const).map(mode => (

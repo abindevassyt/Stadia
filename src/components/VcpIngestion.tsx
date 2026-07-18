@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { VenueConfig, DigitalTwinNode, CMMSSensor } from '../types';
 import { Layers, Radio, Camera, Cpu, ArrowRight, CheckCircle2, AlertTriangle, RefreshCw, Upload } from 'lucide-react';
+import InfoIconHelper from './InfoIconHelper';
 
 interface VcpIngestionProps {
   activeVenue: VenueConfig;
@@ -97,8 +98,12 @@ export default function VcpIngestion({
               <Layers className="h-5 w-5 text-emerald-400" />
               Venue Portability & Ingestion Console
             </h2>
-            <p className="text-sm text-slate-400 mt-1">
-              Load Venue Configuration Packages (VCP). Bridge spatial, radio, and telemetry layers seamlessly.
+            <p className="text-sm text-slate-400 mt-1 flex items-center">
+              Load Venue Configuration Packages (VCP) seamlessly.
+              <InfoIconHelper 
+                title="VCP Ingestion Engine" 
+                content="Enables operators to load multi-layered Venue Configuration Packages (VCP). It connects real-time industrial telemetry, radio fingerprints, and coordinate-aligned 3D meshes into a single operational interface." 
+              />
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -135,9 +140,13 @@ export default function VcpIngestion({
               {activeVenue.digitalTwin.nodes.length} Walkable Nodes Ingested
             </span>
           </div>
-          <p className="text-xs text-slate-400 mb-6">
-            Hover or click nodes on the topological corridor mapping to inspect pathways. Click to toggle state to simulate real-time bottlenecks.
-          </p>
+          <div className="text-xs text-slate-400 mb-6 flex items-center">
+            Interactive Digital Twin topology.
+            <InfoIconHelper 
+              title="Digital Twin Map" 
+              content="Hover or click nodes on the topological corridor map to inspect structural coordinates. Click any node point to toggle its status (Open, Congested, Restricted) to test real-time routing adjustments." 
+            />
+          </div>
 
           {/* SVG map visualizer */}
           <div className="bg-slate-950 border border-slate-850 rounded-lg p-4 relative h-[320px] overflow-hidden flex items-center justify-center">
@@ -269,9 +278,13 @@ export default function VcpIngestion({
             <Camera className="h-4 w-4 text-emerald-400" />
             AR & VPS Point-Cloud Ingestion
           </h3>
-          <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-            Spatial geometric pre-scanning matches live camera feeds instantly against local cloud tables to render pathing vectors without cloud latency.
-          </p>
+          <div className="text-xs text-slate-400 mb-4 flex items-center">
+            Spatial geometric pre-scanning.
+            <InfoIconHelper 
+              title="AR & VPS Ingestion" 
+              content="Aligns point-clouds against the local physical canvas to render navigation vectors instantly with high precision and low battery drain." 
+            />
+          </div>
           <div className="bg-slate-950 border border-slate-850 rounded-lg p-3 font-mono text-xs text-slate-300 flex flex-col gap-2">
             <div className="flex justify-between border-b border-slate-850 pb-1">
               <span className="text-slate-400">Total Spatial Points:</span>
@@ -298,9 +311,13 @@ export default function VcpIngestion({
               <Radio className="h-4 w-4 text-sky-400" />
               BLE & Wi-Fi Radio Fingerprinting
             </h3>
-            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-              Provides fallback background tracking inside concrete tunnels where GPS and camera tracking fail.
-            </p>
+            <div className="text-xs text-slate-400 mb-4 flex items-center">
+              Provides fallback tracking indoors.
+              <InfoIconHelper 
+                title="Radio Fingerprinting" 
+                content="Maps RF signal heatmaps (Bluetooth BLE & Wi-Fi) to enable continuous, high-precision positioning where line-of-sight satellite GPS signals fail." 
+              />
+            </div>
             <div className="flex items-center justify-between bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-xs font-mono text-slate-300 mb-4">
               <span>Ingested BLE Beacons:</span>
               <span className="font-semibold text-emerald-400">{activeVenue.radioFingerprints.bleBeacons.length} Active</span>
@@ -334,9 +351,13 @@ export default function VcpIngestion({
               <Layers className="h-4 w-4 text-amber-400" />
               Unified CMMS Schema Translation Pipeline
             </h3>
-            <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-              Expose a standardized ingestion pipeline. Paste proprietary turnstile, HVAC, or plumbing sensor registry schemas to translate them instantly into the uniform semantic models consumed by Stadia OS.
-            </p>
+            <div className="text-xs text-slate-400 mb-4 flex items-center">
+              Expose a standardized ingestion pipeline.
+              <InfoIconHelper 
+                title="CMMS Translation Pipeline" 
+                content="Input commercial turnstile registers, HVAC load telemetry, or power sub-meters to translate them into standardized semantic parameters used across all operations." 
+              />
+            </div>
             <div className="relative">
               <textarea
                 value={schemaInput}

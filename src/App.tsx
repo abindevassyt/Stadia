@@ -15,7 +15,25 @@ import ARNavigationModule from './components/ARNavigationModule';
 import VoiceAssistant from './components/VoiceAssistant';
 import { PRESET_VENUES, ALL_PERSONAS } from './data/venues';
 import { VenueConfig, Persona, WorkOrder, DigitalTwinNode, CMMSSensor, UserPreferences, AlertServiceLog } from './types';
-import { ShieldCheck, Lock, Layers, UserCheck, Settings, AlertOctagon, HelpCircle, AlertTriangle } from 'lucide-react';
+import { 
+  ShieldCheck, 
+  Cpu,
+  Lock, 
+  Layers, 
+  UserCheck, 
+  Settings, 
+  AlertOctagon, 
+  HelpCircle, 
+  AlertTriangle,
+  Menu,
+  X,
+  Sparkles,
+  Ticket,
+  Compass,
+  ClipboardList,
+  Activity,
+  Briefcase
+} from 'lucide-react';
 import { useRoleNavigation } from './hooks/useRoleNavigation';
 import { usePreferences } from './context/PreferencesContext';
 import { useLanguage } from './context/LanguageContext';
@@ -29,6 +47,9 @@ export default function App() {
   const [activePersona, setActivePersona] = useState<Persona>(ALL_PERSONAS[ALL_PERSONAS.length - 1]); // Default to Fan John Doe
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [googleAccessToken, setGoogleAccessToken] = useState<string | undefined>(undefined);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [workOrderModalOpen, setWorkOrderModalOpen] = useState<boolean>(false);
+  const [prePopulatedWorkOrder, setPrePopulatedWorkOrder] = useState<Partial<WorkOrder> | null>(null);
 
   // Proactive 'Alert Trigger' Service State
   const [bottleneckThreshold, setBottleneckThreshold] = useState<number>(75);
@@ -320,6 +341,19 @@ export default function App() {
     );
   }
 
+  // Mapping tab IDs to their respective Lucide icons for high-contrast nav representations
+  const tabIcons: Record<string, React.ReactNode> = {
+    ai_hub: <Sparkles className="h-4 w-4 shrink-0" />,
+    vcp: <Layers className="h-4 w-4 shrink-0" />,
+    fan: <Ticket className="h-4 w-4 shrink-0" />,
+    ar_nav: <Compass className="h-4 w-4 shrink-0" />,
+    staff: <UserCheck className="h-4 w-4 shrink-0" />,
+    forms_hub: <ClipboardList className="h-4 w-4 shrink-0" />,
+    cmms: <Activity className="h-4 w-4 shrink-0" />,
+    executive: <Briefcase className="h-4 w-4 shrink-0" />,
+    settings: <Settings className="h-4 w-4 shrink-0" />
+  };
+
   return (
     <div className="bg-slate-950 min-h-screen text-slate-100 font-sans antialiased flex flex-col justify-between">
       
@@ -349,7 +383,122 @@ export default function App() {
         currentTheme={preferences.theme}
         onToggleTheme={toggleTheme}
         onGoToSettings={() => setActiveTab('settings')}
+        onToggleMobileMenu={() => setMobileMenuOpen(!mobileMenuOpen)}
+        mobileMenuOpen={mobileMenuOpen}
       />
+
+      {/* Collapsible Mobile Navigation Drawer Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            {/* Dark blur backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileMenuOpen(false)}
+              className="fixed inset-0 bg-black/75 backdrop-blur-xs z-50 md:hidden"
+              id="mobile-drawer-backdrop"
+            />
+
+            {/* Sliding Drawer Container */}
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
+              className="fixed inset-y-0 left-0 w-80 bg-slate-950 border-r-2 border-emerald-500/40 z-50 md:hidden flex flex-col justify-between shadow-2xl p-6"
+              id="mobile-drawer-panel"
+            >
+              <div className="space-y-6">
+                {/* Header Section */}
+                <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+                  <div>
+                    <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono flex items-center gap-1.5">
+                      <Cpu className="h-4 w-4 text-emerald-400 animate-pulse" /> Stadia OS Menu
+                    </h2>
+                    <span className="text-[10px] text-slate-500 font-mono block">Zero-Trust Mobile Access</span>
+                  </div>
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="bg-slate-900 border border-slate-800 hover:border-red-500/50 text-slate-400 hover:text-red-400 p-2 rounded-xl transition-all cursor-pointer flex items-center justify-center focus:outline-none"
+                    aria-label="Close menu"
+                    id="mobile-drawer-close-btn"
+                  >
+                    <X className="h-4.5 w-4.5 stroke-[2.5]" />
+                  </button>
+                </div>
+
+                {/* Scope & Identity Status Card */}
+                <div className="bg-slate-900 border border-slate-850 p-3.5 rounded-2xl space-y-2">
+                  <span className="text-[9px] uppercase tracking-widest font-mono text-slate-500 font-bold block">Active Roster Profile:</span>
+                  <div className="flex items-center gap-2.5">
+                    <div className="bg-emerald-500/10 text-emerald-400 p-2 rounded-xl border border-emerald-500/20">
+                      <UserCheck className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold text-white block leading-tight">{activePersona.roleName}</span>
+                      <span className="text-[9px] text-slate-400 font-mono block mt-0.5">
+                        Clearance L{activePersona.clearanceLevel} • {activePersona.name}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Staggered Vertical Menu List */}
+                <div className="flex flex-col gap-2 overflow-y-auto max-h-[50vh] pr-1 scrollbar-thin">
+                  {[
+                    { id: 'ai_hub', label: t('nav.ai_hub') },
+                    { id: 'vcp', label: t('nav.vcp') },
+                    { id: 'fan', label: t('nav.fan') },
+                    { id: 'ar_nav', label: t('nav.ar_nav') },
+                    { id: 'staff', label: t('nav.staff') },
+                    { id: 'forms_hub', label: t('nav.forms_hub') },
+                    { id: 'cmms', label: t('nav.cmms') },
+                    { id: 'executive', label: t('nav.executive') },
+                    { id: 'settings', label: t('nav.settings') }
+                  ].map(tab => {
+                    const isSelected = activeTab === tab.id;
+                    const access = checkAccess(tab.id as any);
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => {
+                          setActiveTab(tab.id as any);
+                          setMobileMenuOpen(false);
+                          speak(`Navigated to ${tab.label}`);
+                        }}
+                        className={`w-full text-left px-4 py-3 rounded-xl border transition-all flex items-center justify-between font-medium text-xs tracking-wide cursor-pointer ${
+                          isSelected
+                            ? 'bg-emerald-500/10 border-emerald-500/60 text-emerald-400 font-bold shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+                            : 'bg-slate-950 border-slate-900/60 text-slate-400 hover:text-white hover:bg-slate-900/40'
+                        }`}
+                        id={`mobile-tab-nav-${tab.id}`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className={isSelected ? 'text-emerald-400' : 'text-slate-500'}>
+                            {tabIcons[tab.id] || <Layers className="h-4 w-4" />}
+                          </span>
+                          <span>{tab.label}</span>
+                          {!access.allowed && (
+                            <Lock className="h-3 w-3 text-red-500/80 inline-block shrink-0" />
+                          )}
+                        </div>
+                        {getTabBadge(tab.id)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Mobile Drawer Footer */}
+              <div className="border-t border-slate-900 pt-4 text-[9px] text-slate-500 font-mono text-center uppercase tracking-widest">
+                Stadia OS Core v2.5 • LAN Ready
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Global Alert Notification Banner (Proactive Alert Trigger Service) */}
       {globalActiveToast && (
@@ -409,8 +558,24 @@ export default function App() {
       {/* Main OS Desktop Canvas */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-6 py-8">
         
-        {/* Navigation Tabs Bar */}
-        <div className="flex border-b border-slate-800 mb-8 overflow-x-auto scrollbar-thin pb-1.5 scroll-smooth">
+        {/* Mobile current active view indicator (only on mobile) */}
+        <div className="md:hidden flex items-center justify-between bg-slate-900 border border-slate-850 p-3 rounded-xl mb-6 shadow-md" id="mobile-current-view-bar">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-mono uppercase text-slate-400 font-bold tracking-wider">Active view:</span>
+            <span className="text-xs font-bold text-white uppercase">{t(`nav.${activeTab}` as any) || activeTab.replace('_', ' ')}</span>
+          </div>
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="text-[10px] bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2.5 py-1.5 rounded-lg font-mono font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+          >
+            <Menu className="h-3.5 w-3.5 stroke-[2]" />
+            Change View
+          </button>
+        </div>
+
+        {/* Navigation Tabs Bar (Desktop-only horizontal scrollbar tabs) */}
+        <div className="hidden md:flex border-b border-slate-800 mb-8 overflow-x-auto scrollbar-thin pb-1.5 scroll-smooth">
           {[
             { id: 'ai_hub', label: t('nav.ai_hub') },
             { id: 'vcp', label: t('nav.vcp') },
@@ -436,6 +601,7 @@ export default function App() {
               }`}
               id={`tab-nav-${tab.id}`}
             >
+              {tabIcons[tab.id] || null}
               {tab.label}
               {getTabBadge(tab.id)}
             </button>
@@ -604,7 +770,191 @@ export default function App() {
           setActivePersona(ALL_PERSONAS[ALL_PERSONAS.length - 1]);
           setActiveTab('fan');
         }}
+        onTriggerWorkOrder={(prePopulated) => {
+          setPrePopulatedWorkOrder(prePopulated);
+          setWorkOrderModalOpen(true);
+        }}
       />
+
+      {/* Dynamic Pre-populated Work Order Modal for ECT */}
+      <AnimatePresence>
+        {workOrderModalOpen && prePopulatedWorkOrder && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm" id="voice-workorder-modal-container">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 15 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 15 }}
+              className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-lg shadow-2xl relative"
+              id="voice-workorder-modal-card"
+            >
+              <button
+                onClick={() => setWorkOrderModalOpen(false)}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+                title="Close"
+                id="btn-close-workorder-modal"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="flex items-center gap-2.5 mb-4 border-b border-slate-850 pb-3">
+                <div className="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg">
+                  <ClipboardList className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                    Voice Dispatch: ECT Field Work Order
+                  </h3>
+                  <p className="text-[10px] text-slate-500 font-mono">
+                    AUTOPREP FOR ENVIRONMENTAL CLEANLINESS TECHNICIAN
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-4 text-xs">
+                {/* Title */}
+                <div>
+                  <label className="block text-[10px] font-mono text-slate-400 uppercase mb-1">
+                    Work Order Title:
+                  </label>
+                  <input
+                    type="text"
+                    value={prePopulatedWorkOrder.title || ''}
+                    onChange={(e) => setPrePopulatedWorkOrder(prev => prev ? { ...prev, title: e.target.value } : null)}
+                    className="w-full bg-slate-950 border border-slate-850 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500 font-sans"
+                    id="input-workorder-title"
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-[10px] font-mono text-slate-400 uppercase mb-1">
+                    Detailed Instructions:
+                  </label>
+                  <textarea
+                    value={prePopulatedWorkOrder.description || ''}
+                    onChange={(e) => setPrePopulatedWorkOrder(prev => prev ? { ...prev, description: e.target.value } : null)}
+                    rows={3}
+                    className="w-full bg-slate-950 border border-slate-850 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500 font-sans"
+                    id="textarea-workorder-description"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Location */}
+                  <div>
+                    <label className="block text-[10px] font-mono text-slate-400 uppercase mb-1">
+                      Geofence Location:
+                    </label>
+                    <input
+                      type="text"
+                      value={prePopulatedWorkOrder.location || ''}
+                      onChange={(e) => setPrePopulatedWorkOrder(prev => prev ? { ...prev, location: e.target.value } : null)}
+                      className="w-full bg-slate-950 border border-slate-850 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono"
+                      id="input-workorder-location"
+                    />
+                  </div>
+
+                  {/* Priority */}
+                  <div>
+                    <label className="block text-[10px] font-mono text-slate-400 uppercase mb-1">
+                      Priority Level:
+                    </label>
+                    <select
+                      value={prePopulatedWorkOrder.priority || 'high'}
+                      onChange={(e) => setPrePopulatedWorkOrder(prev => prev ? { ...prev, priority: e.target.value as any } : null)}
+                      className="w-full bg-slate-950 border border-slate-850 rounded-lg p-2.5 text-slate-300 focus:outline-none focus:border-emerald-500 font-mono"
+                      id="select-workorder-priority"
+                    >
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="critical">Critical</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Asset ID */}
+                  <div>
+                    <label className="block text-[10px] font-mono text-slate-400 uppercase mb-1">
+                      Mapped Asset ID:
+                    </label>
+                    <input
+                      type="text"
+                      value={prePopulatedWorkOrder.assetId || ''}
+                      onChange={(e) => setPrePopulatedWorkOrder(prev => prev ? { ...prev, assetId: e.target.value } : null)}
+                      className="w-full bg-slate-950 border border-slate-850 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono"
+                      id="input-workorder-asset"
+                    />
+                  </div>
+
+                  {/* Assigned To */}
+                  <div>
+                    <label className="block text-[10px] font-mono text-slate-400 uppercase mb-1">
+                      Assigned Squad Role:
+                    </label>
+                    <input
+                      type="text"
+                      readOnly
+                      value={prePopulatedWorkOrder.assignedToRole || ''}
+                      className="w-full bg-slate-950 border border-slate-850/50 rounded-lg p-2.5 text-emerald-400 font-semibold focus:outline-none font-mono cursor-not-allowed opacity-80"
+                      id="input-workorder-assigned"
+                    />
+                  </div>
+                </div>
+
+                {/* Info Helper tip */}
+                <div className="bg-slate-950/50 border border-slate-850 p-3 rounded-lg text-[10px] text-slate-400 flex items-start gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
+                  <p>
+                    This ticket has been dynamic-mapped from raw voice audio to comply with Environmental Cleanliness and geofenced hazard SLG protocols.
+                  </p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 mt-6 border-t border-slate-850 pt-4">
+                <button
+                  onClick={() => {
+                    if (prePopulatedWorkOrder) {
+                      const finalOrder: WorkOrder = {
+                        id: `WO-${Math.floor(1000 + Math.random() * 9000)}`,
+                        title: prePopulatedWorkOrder.title || 'Spill Cleanup',
+                        description: prePopulatedWorkOrder.description || '',
+                        location: prePopulatedWorkOrder.location || 'Unknown',
+                        assetId: prePopulatedWorkOrder.assetId || 's-plumb-2',
+                        priority: prePopulatedWorkOrder.priority || 'high',
+                        assignedToRole: prePopulatedWorkOrder.assignedToRole || 'Environmental Cleanliness Tech (ECT)',
+                        status: 'open',
+                        createdAt: new Date().toISOString(),
+                        reportedBy: prePopulatedWorkOrder.reportedBy || 'Voice Assistant'
+                      };
+                      handleAddWorkOrder(finalOrder);
+                      setWorkOrderModalOpen(false);
+                      setPrePopulatedWorkOrder(null);
+                      speak("Work order successfully dispatched to facility team queue.");
+                    }
+                  }}
+                  className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl transition-all text-xs cursor-pointer"
+                  id="btn-confirm-voice-workorder"
+                >
+                  Authorize & Push Work Order
+                </button>
+                <button
+                  onClick={() => {
+                    setWorkOrderModalOpen(false);
+                    setPrePopulatedWorkOrder(null);
+                  }}
+                  className="bg-slate-800 hover:bg-slate-750 text-slate-300 font-semibold py-2.5 px-4 rounded-xl transition-all text-xs cursor-pointer"
+                  id="btn-cancel-voice-workorder"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -33,6 +33,7 @@ interface VoiceAssistantProps {
   activePersona: Persona;
   onChangePersona: (persona: Persona) => void;
   onLogout: () => void;
+  onTriggerWorkOrder?: (prePopulated: any) => void;
 }
 
 interface CommandLog {
@@ -47,7 +48,8 @@ export default function VoiceAssistant({
   setActiveTab,
   activePersona,
   onChangePersona,
-  onLogout
+  onLogout,
+  onTriggerWorkOrder
 }: VoiceAssistantProps) {
   const { preferences, updatePreferences, toggleTheme } = usePreferences();
   const { t } = useLanguage();
@@ -417,6 +419,44 @@ export default function VoiceAssistant({
         speak("Could not reach municipal transit query API.");
       }
       return;
+    }
+
+    // ------------------------------------
+    // 4.5. Environmental Cleanliness Work Orders
+    // ------------------------------------
+    if (cmd.includes('spill') || cmd.includes('hazard') || cmd.includes('spillage') || cmd.includes('overflow') || cmd.includes('clean up')) {
+      let detectedLocation = 'Sector C';
+      const locationRegex = /(?:in|at|for|near)\s+((?:sector|block|gate|zone|section|concourse)\s+[a-g0-9\-]+|[a-g0-9\-]+\s+(?:sector|block|gate|zone|section|concourse)|[a-g0-9\-]+)/i;
+      const match = rawCommand.match(locationRegex);
+      if (match && match[1]) {
+        detectedLocation = match[1].trim();
+        if (detectedLocation.length <= 10) {
+          detectedLocation = detectedLocation.toUpperCase();
+        }
+      } else {
+        const wordMatch = rawCommand.match(/\b(sector|block|gate|zone|section|concourse)\s+([a-zA-Z0-9]+)/i);
+        if (wordMatch) {
+          detectedLocation = `${wordMatch[1].charAt(0).toUpperCase() + wordMatch[1].slice(1).toLowerCase()} ${wordMatch[2].toUpperCase()}`;
+        }
+      }
+
+      const prePopulatedWorkOrder = {
+        title: `${detectedLocation} Spill & Hazard Cleanup`,
+        description: `Spill reported via hands-free co-pilot dictation: "${rawCommand}". Deploy warning signage, inspect area, and perform standard wet-vacuum cleanup.`,
+        location: detectedLocation,
+        assetId: 's-plumb-2',
+        priority: 'high',
+        assignedToRole: 'Environmental Cleanliness Tech (ECT)',
+        status: 'open',
+        reportedBy: `${activePersona.name} (${activePersona.roleName})`
+      };
+
+      if (onTriggerWorkOrder) {
+        onTriggerWorkOrder(prePopulatedWorkOrder);
+        addLog(`Triggered pre-populated ECT Work Order for ${detectedLocation}`, "success");
+        speak(`Hazard captured. Opening pre-populated work order modal for ${detectedLocation}. Assigned to Environmental Cleanliness Technician.`);
+        return;
+      }
     }
 
     // ------------------------------------

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { VenueConfig, Persona } from '../types';
 import { useLanguage } from '../context/LanguageContext';
+import InfoIconHelper from './InfoIconHelper';
 
 interface AIAdvisorySuiteProps {
   activeVenue: VenueConfig;
@@ -211,7 +212,13 @@ export default function AIAdvisorySuite({ activeVenue, activePersona }: AIAdviso
             <Sparkles className="h-3.5 w-3.5 text-emerald-400 animate-spin" />
             GenAI Smart Advisor
           </span>
-          <p className="text-[10px] text-slate-400 mt-1 leading-tight">Leveraging Gemini for real-time sustainability & assistance</p>
+          <p className="text-[10px] text-slate-400 mt-1 leading-tight flex items-center justify-center">
+            Leveraging Gemini Real-Time Analytics
+            <InfoIconHelper 
+              title="GenAI Smart Advisor" 
+              content="Calculates dynamic routing, transit, eco-optimization, translations, and briefs using live stadium data paired with the Gemini 3.5 Flash model." 
+            />
+          </p>
         </div>
 
         {[
@@ -280,9 +287,13 @@ export default function AIAdvisorySuite({ activeVenue, activePersona }: AIAdviso
                   <Accessibility className="h-5 w-5 text-sky-400" />
                   AI-Powered Accessible Wayfinding & Quiet Pathfinder
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
-                  Recommends custom routes that prioritize stroller availability, wheelchair ramp gradients, or low decibel counts (sensory quiet zones) bypassing high-congested nodes.
-                </p>
+                <div className="text-xs text-slate-400 mt-1 flex items-center">
+                  Recommends custom quiet and accessible routes.
+                  <InfoIconHelper 
+                    title="Quiet Pathfinder" 
+                    content="Analyzes topological gradients, elevator positions, sensory sound levels, and congestion metrics to guide guests with physical, cognitive, or acoustic sensitivities safely." 
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-950 p-4 border border-slate-850 rounded-xl">
@@ -400,9 +411,13 @@ export default function AIAdvisorySuite({ activeVenue, activePersona }: AIAdviso
                   <Bus className="h-5 w-5 text-amber-400 animate-pulse" />
                   AI Transportation & Multi-Modal Transit Coordinator
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
-                  Synchronizes stadium departures with real-time municipal train, shuttle, bus, and rideshare dispatch databases to minimize public roadway choke points.
-                </p>
+                <div className="text-xs text-slate-400 mt-1 flex items-center">
+                  Synchronizes departures with local transit systems.
+                  <InfoIconHelper 
+                    title="Transit Coordinator" 
+                    content="Integrates live municipal train timetables, rideshare surge indicators, and shuttle loop intervals to direct fans toward eco-friendly, fast, and uncrowded options." 
+                  />
+                </div>
               </div>
 
               <div className="bg-slate-950 p-4 border border-slate-850 rounded-xl space-y-4">
@@ -485,9 +500,13 @@ export default function AIAdvisorySuite({ activeVenue, activePersona }: AIAdviso
                     <Leaf className="h-5 w-5 text-emerald-400" />
                     AI Sustainability & Eco-Efficiency Utility Optimizer
                   </h3>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Prescribes smart power shaving plans, HVAC load balancing, and graywater plumbing recycling adjustments using real-time SCADA telemetry inputs.
-                  </p>
+                  <div className="text-xs text-slate-400 mt-1 flex items-center">
+                    AI-driven power shaving & resource optimization.
+                    <InfoIconHelper 
+                      title="Eco Utility Optimizer" 
+                      content="Analyzes SCADA telemetry data from air chillers, high-voltage breakers, and water flows to run battery peak-shaving cycles and optimize stadium-wide utility loads." 
+                    />
+                  </div>
                 </div>
                 <button
                   onClick={runSustainabilityAudit}
@@ -583,9 +602,13 @@ export default function AIAdvisorySuite({ activeVenue, activePersona }: AIAdviso
                   <Globe className="h-5 w-5 text-violet-400" />
                   AI Universal Multilingual Assistance & Translation Hub
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
-                  Enables international stadium visitors to type questions in their native tongue and receive fully localized concierge answers translated perfectly back.
-                </p>
+                <div className="text-xs text-slate-400 mt-1 flex items-center">
+                  Instant localized visitor translations.
+                  <InfoIconHelper 
+                    title="Universal Language Translator" 
+                    content="Uses multilingual AI parameters to translate incoming user queries in any language and deliver contextual concierge responses back to guests in their native tongue." 
+                  />
+                </div>
               </div>
 
               <div className="bg-slate-950 p-4 border border-slate-850 rounded-xl">
@@ -664,9 +687,13 @@ export default function AIAdvisorySuite({ activeVenue, activePersona }: AIAdviso
                     <FileText className="h-5 w-5 text-pink-400" />
                     Real-Time Decision Support: Tactical Operational Briefing
                   </h3>
-                  <p className="text-xs text-slate-400 mt-1">
-                    Synthesizes crowd flow vectors, active SCADA facilities alerts, weather delays, and registers telemetry to formulate preventive command directives.
-                  </p>
+                  <div className="text-xs text-slate-400 mt-1 flex items-center">
+                    AI operational decision support briefing.
+                    <InfoIconHelper 
+                      title="Tactical Command Briefing" 
+                      content="Synthesizes multiple venue streams—including live pedestrian velocities, active machinery faults, weather events, and concession queues—to build tactical situational briefings." 
+                    />
+                  </div>
                 </div>
                 <button
                   onClick={runOperationalBriefing}

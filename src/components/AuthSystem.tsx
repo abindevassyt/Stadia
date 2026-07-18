@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Persona } from '../types';
 import { ALL_PERSONAS } from '../data/venues';
 import { motion, AnimatePresence } from 'motion/react';
+import InfoIconHelper from './InfoIconHelper';
 import { 
   auth, 
   db, 
@@ -369,44 +370,40 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
             </div>
 
             <div className="pt-6">
-              <h2 className="text-2xl font-bold text-white leading-tight tracking-tight">
-                Decentralized Multi-Tenant Venue Control
+              <h2 className="text-2xl font-bold text-white leading-tight tracking-tight flex items-center gap-1.5 flex-wrap">
+                Decentralized Venue Control
+                <InfoIconHelper
+                  title="Venue Operations"
+                  content="Experience next-generation high-density operations. Zero-Trust credential isolation routes volunteers, engineers, and executives dynamically."
+                  position="right"
+                />
               </h2>
-              <p className="text-slate-400 text-xs leading-relaxed mt-3">
-                Experience next-generation high-density operations. Zero-Trust credential isolation routes volunteers, engineers, and executives dynamically.
-              </p>
             </div>
           </div>
 
           {/* Interactive animated telemetry console */}
-          <div className="bg-slate-950/80 border border-slate-850/60 rounded-xl p-4 my-6 font-mono text-[10px] space-y-2">
-            <div className="flex justify-between text-slate-500">
-              <span>SYSTEM SECTOR STATE:</span>
-              <span className="text-emerald-400 font-bold">READY</span>
+          <div className="bg-slate-950/85 border border-slate-850/60 rounded-xl p-3.5 my-5 font-mono text-[10px] flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-slate-400">SYSTEM STATE: READY</span>
             </div>
-            <div className="space-y-1 text-slate-400">
-              <div className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                <span>Edge Ingestion Pipeline (Active)</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                <span>Predictive Pathing Engine Loaded</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                <span>Offline Playbook RAG DB Connected</span>
-              </div>
-            </div>
-            <div className="pt-2 border-t border-slate-850 text-slate-500 flex justify-between">
-              <span>Ingress SLA: &lt;400ms</span>
-              <span>LAN Cache: Active</span>
-            </div>
+            <InfoIconHelper
+              title="System Telemetry"
+              content="Edge Ingestion Pipeline: Active. Predictive Pathing Engine: Loaded. Offline Playbook RAG DB: Connected. Ingress SLA: <400ms. LAN Cache: Active."
+              position="top"
+            />
           </div>
 
-          <div className="text-[10px] text-slate-500 font-mono flex items-center gap-1.5">
-            <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
-            <span>PCI-DSS & ISO-27001 Cryptographic Handshake Enabled</span>
+          <div className="text-[10px] text-slate-500 font-mono flex items-center justify-between gap-1.5 w-full">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0" />
+              <span>PCI-DSS Security Standard</span>
+            </div>
+            <InfoIconHelper
+              title="Compliance Standards"
+              content="PCI-DSS & ISO-27001 compliant high-density venue authentication protocols with zero-knowledge cryptographic handshake."
+              position="top"
+            />
           </div>
         </div>
 
@@ -457,16 +454,17 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="mb-6">
-                    <h3 className="text-lg font-bold text-white tracking-tight">
+                  <div className="mb-6 border-b border-slate-850/55 pb-4">
+                    <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2 flex-wrap">
                       {isSignUp ? 'Create Attendee Digital Wallet' : 'Sign In to Your Digital Ticket'}
+                      <InfoIconHelper 
+                        title="Attendee Access" 
+                        content={isSignUp 
+                          ? 'Register your cryptographic ticket details to activate in-seat pre-ordering, local concession routing, and offline-first maps.' 
+                          : 'Access your ticket stubs, geofenced concessions, and live venue maps instantly.'
+                        } 
+                      />
                     </h3>
-                    <p className="text-slate-400 text-xs mt-1">
-                      {isSignUp 
-                        ? 'Register your cryptographic ticket details to activate in-seat pre-ordering.' 
-                        : 'Access your ticket stubs, geofenced concessions, and live venue maps.'
-                      }
-                    </p>
                   </div>
 
                   <form onSubmit={handleFanAuthSubmit} className="space-y-4">
@@ -532,9 +530,15 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                     {/* Geofenced Seating Block details (only shown on Sign Up for true database mapping) */}
                     {isSignUp && (
                       <div className="p-3.5 bg-slate-950 border border-slate-850 rounded-xl space-y-3">
-                        <span className="text-[9px] uppercase tracking-widest font-mono text-emerald-400 block font-bold">
-                          Verify Physical Seating Coordinates:
-                        </span>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[9px] uppercase tracking-widest font-mono text-emerald-400 block font-bold">
+                            Verify Seating Coordinates
+                          </span>
+                          <InfoIconHelper 
+                            title="Seating Mapping" 
+                            content="Your seating block is used to geofence relative concession booths, emergency evacuation gates, and physical delivery options." 
+                          />
+                        </div>
                         <div className="grid grid-cols-3 gap-2.5">
                           <div>
                             <label className="text-[9px] text-slate-500 font-mono block mb-1">SECTOR / BLOCK:</label>
@@ -583,11 +587,16 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                   {/* Divider line for OAuth options */}
                   <div className="relative my-6">
                     <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-slate-800"></div>
+                      <div className="w-full border-t border-slate-850"></div>
                     </div>
                     <div className="relative flex justify-center text-xs">
-                      <span className="px-3 bg-slate-900 text-slate-400 font-mono text-[9px] uppercase tracking-wider">
-                        Secure Federated Single Sign-On (SSO)
+                      <span className="px-3 bg-slate-900 text-slate-400 font-mono text-[9px] uppercase tracking-wider flex items-center gap-1.5">
+                        Federated SSO Login
+                        <InfoIconHelper
+                          title="Single Sign-On Security"
+                          content="Authenticate seamlessly using Google OAuth 2.0. Credentials are secure and only the necessary scope is requested."
+                          position="top"
+                        />
                       </span>
                     </div>
                   </div>
@@ -597,15 +606,19 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                     <button
                       type="button"
                       onClick={() => triggerOAuthFlow('google')}
-                      className="bg-slate-950 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-900/30 p-3.5 rounded-xl flex items-center justify-center gap-3 transition-all cursor-pointer group text-left w-full"
+                      className="bg-slate-950 border border-slate-800 hover:border-emerald-500/50 hover:bg-slate-900/30 p-3 rounded-xl flex items-center justify-start gap-3 transition-all cursor-pointer group text-left w-full"
                       id="btn-oauth-google"
                     >
                       <div className="bg-red-500/10 text-red-400 p-2 rounded-lg group-hover:scale-105 transition-transform shrink-0">
                         <Chrome className="h-4 w-4" />
                       </div>
-                      <div>
-                        <span className="text-[11px] font-bold text-slate-200 block">Continue with Google</span>
-                        <span className="text-[9px] font-mono text-slate-500 block">Secure OAuth 2.0 Identity Hub</span>
+                      <div className="flex-1 flex items-center justify-between">
+                        <span className="text-[11px] font-bold text-slate-200">Continue with Google</span>
+                        <InfoIconHelper
+                          title="Google SSO"
+                          content="Authenticates your identity and links your digital ticket automatically via secure federated protocol."
+                          position="top"
+                        />
                       </div>
                     </button>
                   </div>
@@ -660,11 +673,13 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                   )}
 
                   {/* Security Policy Badge */}
-                  <div className="mt-4 p-2.5 bg-emerald-950/10 border border-emerald-900/20 rounded-lg text-[10px] text-emerald-400/80 font-mono flex items-start gap-2">
-                    <ShieldCheck className="h-3.5 w-3.5 mt-0.5 shrink-0 text-emerald-400" />
-                    <span>
-                      <strong>Identity Isolation Policy:</strong> These external SSO providers are strictly locked to the <strong>Fan/Attendee</strong> role. Corporate and Operational clearance levels are restricted to direct PIN enclaves.
-                    </span>
+                  <div className="mt-4 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                    <span>SSO Restricted to Attendee Role</span>
+                    <InfoIconHelper 
+                      title="Identity Isolation Policy" 
+                      content="These external SSO providers are strictly locked to the Fan/Attendee role. Corporate and Operational clearance levels are restricted to direct PIN enclaves." 
+                      position="top"
+                    />
                   </div>
 
                   {/* Tab state toggler */}
@@ -695,13 +710,14 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="mb-6">
-                    <h3 className="text-lg font-bold text-white tracking-tight">
-                      Enterprise & Operational Command Portal
+                  <div className="mb-6 border-b border-slate-850/55 pb-4">
+                    <h3 className="text-lg font-bold text-white tracking-tight flex items-center gap-2 flex-wrap">
+                      Enterprise Command Portal
+                      <InfoIconHelper 
+                        title="Operational Access" 
+                        content="Staff accounts are managed strictly within regional directories. Secure access is granted after checking the employee roster and verifying your encrypted passcode PIN." 
+                      />
                     </h3>
-                    <p className="text-slate-400 text-xs mt-1">
-                      Staff accounts are managed strictly within regional directories. Secure access is granted after checking the employee roster and verifying your encrypted passcode PIN.
-                    </p>
                   </div>
 
                   <form onSubmit={handleStaffSubmit} className="space-y-4">
@@ -732,9 +748,19 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                     </div>
 
                     <div>
-                      <label className="text-[10px] uppercase font-mono text-slate-400 block mb-1">
-                        Input Security MFA Code / PIN:
-                      </label>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[10px] uppercase font-mono text-slate-400 block">
+                          Input Security MFA Code / PIN:
+                        </label>
+                        <div className="flex items-center gap-1 text-[10px] text-slate-500 font-mono">
+                          <span>Demo Access PIN</span>
+                          <InfoIconHelper
+                            title="Demo Passcode Bypass"
+                            content="For testing and assessment, enter 2026 or 1234 to bypass corporate roster check constraints."
+                            position="top"
+                          />
+                        </div>
+                      </div>
                       <div className="relative">
                         <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
                         <input
@@ -743,14 +769,11 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                           maxLength={4}
                           value={staffPin}
                           onChange={(e) => setStaffPin(e.target.value.replace(/\D/g, ''))}
-                          placeholder="e.g. 2026"
+                          placeholder="••••"
                           className="w-full bg-slate-950 border border-slate-800 focus:border-emerald-500 text-xs text-white rounded-lg pl-10 pr-4 py-2.5 focus:outline-none transition-all tracking-widest font-bold"
                           id="staff-auth-pin"
                         />
                       </div>
-                      <span className="text-[10px] text-slate-500 font-mono mt-1 block">
-                        * Demo bypass validation code: <strong className="text-emerald-400">2026</strong> or <strong className="text-emerald-400">1234</strong>
-                      </span>
                     </div>
 
                     <div className="flex gap-2 pt-2">
@@ -778,14 +801,13 @@ export default function AuthSystem({ onLoginSuccess }: AuthSystemProps) {
                   </form>
 
                   {/* Informational corporate banner */}
-                  <div className="mt-8 bg-slate-950 border border-slate-850 rounded-xl p-4 flex gap-3">
-                    <Fingerprint className="h-8 w-8 text-slate-600 shrink-0" />
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider font-mono text-slate-400 block font-bold">Roster Security Note</span>
-                      <p className="text-[11px] text-slate-500 leading-normal mt-0.5">
-                        New ground volunteers must register in person at Command Center Gate B. The system prohibits public account self-provisioning on operational modules to prevent leakage.
-                      </p>
-                    </div>
+                  <div className="mt-6 flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                    <span>Roster Registration Policy</span>
+                    <InfoIconHelper 
+                      title="Roster Security" 
+                      content="New ground volunteers must register in person at Command Center Gate B. The system prohibits public account self-provisioning on operational modules to prevent leakage." 
+                      position="top"
+                    />
                   </div>
                 </motion.div>
               )}
